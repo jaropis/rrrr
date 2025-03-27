@@ -16,28 +16,27 @@ const CSVReader = () => {
 
     if (file) {
       Papa.parse(file, {
-        delimiter: /\s+/,
+        delimiter: "\t", // using explicit tab delimiter instead of regex
         skipEmptyLines: true,
+        header: true, // automatically use first row as headers
         complete: (result) => {
           if (result.errors.length > 0) {
-            setError("Error parsing CSV file" + result.errors[0].message);
+            setError("Error parsing CSV file: " + result.errors[0].message);
             console.log(result.errors);
             return;
           }
 
-          // getting headers from the first row
-          setHeaders(result.data[0]);
+          // getting headers from the meta.fields
+          setHeaders(result.meta.fields || []);
 
-          // getting the first rowsToShow rows (or less if file is smaller)
+          // mapping the data with row ids
           const previewData = result.data
-            .slice(1, rowsToShow + 1)
-            .map((row, index) => {
-              const rowData = { id: index };
-              row.forEach((cell, colIndex) => {
-                rowData[result.data[0][colIndex]] = cell;
-              });
-              return rowData;
-            });
+            .slice(0, rowsToShow)
+            .map((row, index) => ({
+              id: index,
+              ...row,
+            }));
+
           setData(previewData);
         },
         error: (error) => {
@@ -46,6 +45,7 @@ const CSVReader = () => {
       });
     }
   };
+
   // defining columns for DataGrid based on headers
   const columns = headers.map((header) => ({
     field: header,
@@ -75,7 +75,6 @@ const CSVReader = () => {
       {/* error display */}
       {error && <p style={{ color: "red" }}>{error}</p>}
 
-      {/* table display */}
       {/* DataGrid display */}
       {data.length > 0 && (
         <div style={{ height: 400, width: "100%" }}>
