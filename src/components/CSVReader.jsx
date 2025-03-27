@@ -1,56 +1,83 @@
-import React, { useState } from "react";
-import Papa from "papaparse";
+import React, { useState, useEffect } from "react";
 import { DataGrid } from "@mui/x-data-grid";
 import { Radio } from "@mui/material";
+import Tachogram from "./Tachogram";
 
 const CSVReader = () => {
   const [data, setData] = useState([]);
   const [headers, setHeaders] = useState([]);
   const [error, setError] = useState(null);
   const [selectedColumn, setSelectedColumn] = useState(null);
-  // number of rows to show (like head() in python)
+  const [colWidth, setColWidth] = useState(120);
+  const [fullData, setFullData] = useState(null);
   const rowsToShow = 6;
 
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
+    setError(null);
 
     if (file) {
-      Papa.parse(file, {
-        delimiter: "\t", // using explicit tab delimiter instead of regex
-        skipEmptyLines: true,
-        header: true, // automatically use first row as headers
-        complete: (result) => {
-          if (result.errors.length > 0) {
-            setError("Error parsing CSV file: " + result.errors[0].message);
-            console.log(result.errors);
-            return;
+      const reader = new FileReader();
+
+      reader.onload = (e) => {
+        try {
+          const content = e.target.result;
+          const lines = content
+            .split(/\r?\n/)
+            .filter((line) => line.trim().length > 0);
+
+          if (lines.length === 0) {
+            throw new Error("File is empty");
           }
 
-          // getting headers from the meta.fields
-          setHeaders(result.meta.fields || []);
+          // parsing all lines with the same approach - split on any whitespace
+          // and filter out empty parts
+          const parsedLines = lines.map((line) =>
+            line.split(/\s+/).filter((part) => part.trim().length > 0),
+          );
 
-          // mapping the data with row ids
-          const previewData = result.data
-            .slice(0, rowsToShow)
-            .map((row, index) => ({
-              id: index,
-              ...row,
-            }));
+          const parsedHeaders = parsedLines[0];
+          const parsedData = parsedLines.slice(1);
+          setFullData(parsedLines);
+          setHeaders(parsedHeaders);
 
-          setData(previewData);
-        },
-        error: (error) => {
-          setError("Error reading file: " + error.message);
-        },
-      });
+          // creating grid data
+          const gridData = parsedData.slice(0, rowsToShow).map((row, index) => {
+            const rowData = { id: index };
+
+            parsedHeaders.forEach((header, colIndex) => {
+              rowData[header] = colIndex < row.length ? row[colIndex] : "";
+            });
+
+            return rowData;
+          });
+
+          setData(gridData);
+        } catch (err) {
+          setError(`Failed to process file: ${err.message}`);
+          console.error("Error processing file:", err);
+        }
+      };
+
+      reader.onerror = () => {
+        setError("Error reading file");
+      };
+
+      reader.readAsText(file);
     }
   };
 
-  // defining columns for DataGrid based on headers
+  useEffect(() => {
+    const maxHeader =
+      headers.reduce((acc, elem) => Math.max(elem.length, acc), 0) * 15;
+    setColWidth(maxHeader);
+  }, [headers]);
+
+  // Define columns for DataGrid
   const columns = headers.map((header) => ({
     field: header,
     headerName: header.charAt(0).toUpperCase() + header.slice(1),
-    width: Math.max(100, header.length * 10),
+    width: Math.max(colWidth, header.length * 12),
     headerAlign: "center",
     align: "center",
     renderHeader: (params) => (
@@ -64,29 +91,50 @@ const CSVReader = () => {
       </div>
     ),
   }));
-
   return (
     <div>
-      <h2>CSV Preview</h2>
+      <h2>Data File Reader</h2>
+      <h3>
+        Your data are analyzed in your browser, they never leave your computer
+      </h3>
 
-      {/* file input */}
-      <input type="file" accept=".csv,.txt" onChange={handleFileUpload} />
+      <div style={{ marginBottom: "16px" }}>
+        <input
+          type="file"
+          accept=".txt,.csv,.tsv,.dat"
+          onChange={handleFileUpload}
+        />
+      </div>
 
       {/* error display */}
       {error && <p style={{ color: "red" }}>{error}</p>}
 
+      {/* upload prompt */}
+      {data.length === 0 && !error && <p>Upload a file to see preview</p>}
+
       {/* DataGrid display */}
       {data.length > 0 && (
-        <div style={{ height: 400, width: "100%" }}>
-          <DataGrid
-            rows={data}
-            columns={columns}
-            pageSizeOptions={[rowsToShow]} // Optional: control pagination
-            initialState={{
-              pagination: { paginationModel: { pageSize: rowsToShow } },
-            }}
-            disableColumnMenu
-          />
+        <div>
+          <div style={{ height: 420, width: "100%" }}>
+            <DataGrid
+              rows={data}
+              columns={columns}
+              pageSizeOptions={[5, 10, 25]}
+              initialState={{
+                pagination: null,
+              }}
+              disableColumnMenu
+            />
+          </div>
+          <Tachogram selectedColumn={selectedColumn} data={fullData} />
+        </div>
+      )}
+
+      {/* debug info */}
+      {headers.length > 0 && (
+        <div style={{ marginTop: "16px", fontSize: "0.8rem", color: "#666" }}>
+          <p>Detected columns: {headers.join(", ")}</p>
+          <p>Loaded {data.length} rows</p>
         </div>
       )}
     </div>

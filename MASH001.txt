@@ -1,4 +1,4 @@
-time RR
+time	annotations
 68.433	N
 69.198	N
 69.970	N
