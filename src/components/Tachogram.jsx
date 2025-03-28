@@ -1,12 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import Dygraph from "dygraphs";
 
-const logRange = (min, max, label) => {
-  let start = min;
-  let end = max;
-  console.log(label + ": " + start + " to " + end);
-};
-
 const parseDiff = (data, selectedColumn) => {
   const localPlottingData = [];
   for (let i = 1; i < data.length - 1; i++) {
@@ -27,9 +21,34 @@ const parseNoDiff = (data, selectedColumn) => {
   }
   return localPlottingData;
 };
+
 const Tachogram = ({ selectedColumn, data }) => {
+  const logRange = (min, max, label) => {
+    console.log(min, max);
+    setMinmax([min, max]);
+  };
+  const handleCut = (e) => {
+    e.preventDefault();
+    let cutData = data.slice(minmax[0], minmax[1]);
+    cutData.splice(0, 0, data[0]);
+    console.log(cutData);
+
+    const csvContent = cutData.map((row) => row.join("\t")).join("\n");
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "cutData.csv";
+    document.body.append(link);
+    link.click();
+    document.body.removeChild(link);
+    // cleanup
+    URL.revokeObjectURL(url);
+  };
   const diff = true;
   const [plottingData, setPlottingData] = useState(null);
+  const [minmax, setMinmax] = useState([]);
   const tachoGraph = useRef();
   useEffect(() => {
     if (data && selectedColumn >= 0) {
@@ -43,7 +62,6 @@ const Tachogram = ({ selectedColumn, data }) => {
 
   useEffect(() => {
     if (plottingData && plottingData.length > 0) {
-      console.log("preparing dygraph");
       tachoGraph.current = new Dygraph(
         document.getElementById("graphdiv"),
         plottingData,
@@ -80,15 +98,18 @@ const Tachogram = ({ selectedColumn, data }) => {
     };
   }, [plottingData]);
   return (
-    <div
-      id="graphdiv"
-      style={{
-        width: "95%",
-        height: 300,
-        marginLeft: 30,
-        marginRight: 30,
-      }}
-    ></div>
+    <>
+      <div
+        id="graphdiv"
+        style={{
+          width: "95%",
+          height: 300,
+          marginLeft: 30,
+          marginRight: 30,
+        }}
+      ></div>
+      <button onClick={handleCut}>Cut and export</button>
+    </>
   );
 };
 

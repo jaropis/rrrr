@@ -1,0 +1,3 @@
+1) various separators
+2) no drawing for non-numeric columns
+3) downloaded filename
