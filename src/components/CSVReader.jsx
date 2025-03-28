@@ -8,6 +8,7 @@ const CSVReader = () => {
   const [headers, setHeaders] = useState([]);
   const [error, setError] = useState(null);
   const [selectedColumn, setSelectedColumn] = useState(null);
+  const [selectedColumnNo, setSelectedColumnNo] = useState(null);
   const [colWidth, setColWidth] = useState(120);
   const [fullData, setFullData] = useState(null);
   const rowsToShow = 6;
@@ -73,6 +74,10 @@ const CSVReader = () => {
     setColWidth(maxHeader);
   }, [headers]);
 
+  useEffect(() => {
+    const selectedColumnNumber = headers.indexOf(selectedColumn);
+    setSelectedColumnNo(selectedColumnNumber);
+  }, [headers, selectedColumn]);
   // Define columns for DataGrid
   const columns = headers.map((header) => ({
     field: header,
@@ -126,7 +131,7 @@ const CSVReader = () => {
               disableColumnMenu
             />
           </div>
-          <Tachogram selectedColumn={selectedColumn} data={fullData} />
+          <Tachogram selectedColumn={selectedColumnNo} data={fullData} />
         </div>
       )}
 
