@@ -22,7 +22,7 @@ const parseNoDiff = (data, selectedColumn) => {
   return localPlottingData;
 };
 
-const Tachogram = ({ selectedColumn, data }) => {
+const Tachogram = ({ selectedColumn, data, filename }) => {
   const logRange = (min, max, label) => {
     console.log(min, max);
     setMinmax([min, max]);
@@ -31,7 +31,6 @@ const Tachogram = ({ selectedColumn, data }) => {
     e.preventDefault();
     let cutData = data.slice(minmax[0], minmax[1]);
     cutData.splice(0, 0, data[0]);
-    console.log(cutData);
 
     const csvContent = cutData.map((row) => row.join("\t")).join("\n");
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
@@ -39,7 +38,10 @@ const Tachogram = ({ selectedColumn, data }) => {
 
     const link = document.createElement("a");
     link.href = url;
-    link.download = "cutData.csv";
+    const cutFilename = filename.split(".");
+    const downloadFilename =
+      cutFilename[0] + "_cut" + (cutFilename[1] ? "." + cutFilename[1] : null);
+    link.download = downloadFilename;
     document.body.append(link);
     link.click();
     document.body.removeChild(link);

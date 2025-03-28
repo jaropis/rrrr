@@ -11,12 +11,15 @@ const CSVReader = () => {
   const [selectedColumnNo, setSelectedColumnNo] = useState(null);
   const [colWidth, setColWidth] = useState(120);
   const [fullData, setFullData] = useState(null);
+  const [filename, setFilename] = useState(null);
+  const [separator, setSeparator] = useState("\t"); // Default separator (whitespace)
+  const [customFilename, setCustomFilename] = useState("_cut"); // Custom filename input
   const rowsToShow = 6;
 
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
     setError(null);
-
+    setFilename(file.name);
     if (file) {
       const reader = new FileReader();
 
@@ -30,11 +33,12 @@ const CSVReader = () => {
           if (lines.length === 0) {
             throw new Error("File is empty");
           }
-
-          // parsing all lines with the same approach - split on any whitespace
-          // and filter out empty parts
+          console.log("e.target.result", Object.getOwnPropertyNames(e.target));
+          // parsing all lines with the selected separator
           const parsedLines = lines.map((line) =>
-            line.split(/\s+/).filter((part) => part.trim().length > 0),
+            line
+              .split(new RegExp(separator))
+              .filter((part) => part.trim().length > 0),
           );
 
           const parsedHeaders = parsedLines[0];
@@ -103,19 +107,63 @@ const CSVReader = () => {
         Your data are analyzed in your browser, they never leave your computer
       </h3>
 
-      <div style={{ marginBottom: "16px" }}>
-        <input
-          type="file"
-          accept=".txt,.csv,.tsv,.dat"
-          onChange={handleFileUpload}
-        />
+      {/* Input controls in a single row */}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: "20px",
+          flexWrap: "wrap",
+          marginBottom: "16px",
+        }}
+      >
+        <div>
+          <label htmlFor="file" style={{ marginRight: "5px" }}>
+            Select a file
+          </label>
+          <input
+            type="file"
+            accept=".txt,.csv,.tsv,.dat,.rea"
+            onChange={handleFileUpload}
+          />
+        </div>
+
+        <div>
+          <label htmlFor="separator" style={{ marginRight: "5px" }}>
+            Select separator:{" "}
+          </label>
+          <select
+            id="separator"
+            value={separator}
+            onChange={(e) => setSeparator(e.target.value)}
+          >
+            <option value="\\t">Tab</option>
+            <option value="\\s+">Whitespace</option>
+            <option value=",">Comma (,)</option>
+            <option value=";">Semicolon (;)</option>
+          </select>
+        </div>
+
+        <div>
+          <label htmlFor="customFilename" style={{ marginRight: "5px" }}>
+            Custom filename:{" "}
+          </label>
+          <input
+            type="text"
+            id="customFilename"
+            value={customFilename}
+            onChange={(e) => setCustomFilename(e.target.value)}
+            placeholder="Enter a text"
+          />
+        </div>
       </div>
 
       {/* error display */}
       {error && <p style={{ color: "red" }}>{error}</p>}
 
-      {/* upload prompt */}
-      {data.length === 0 && !error && <p>Upload a file to see preview</p>}
+      {/* upload prompt 
+      {data.length === 0 && !error && <p>Upload a file to see preview</p>}*/}
 
       {/* DataGrid display */}
       {data.length > 0 && (
@@ -131,7 +179,11 @@ const CSVReader = () => {
               disableColumnMenu
             />
           </div>
-          <Tachogram selectedColumn={selectedColumnNo} data={fullData} />
+          <Tachogram
+            selectedColumn={selectedColumnNo}
+            data={fullData}
+            filename={customFilename || filename} // Use custom filename if provided
+          />
         </div>
       )}
 
