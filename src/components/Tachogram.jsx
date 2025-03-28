@@ -5,23 +5,38 @@ const logRange = (minDate, maxDate, label) => {
   let end = new Date(maxDate).toISOString().split("T")[0];
   console.log(label + ": " + start + " to " + end);
 };
+
+const parseDiff = (data, selectedColumn) => {
+  const localPlottingData = [];
+  for (let i = 1; i < data.length - 1; i++) {
+    const value =
+      parseFloat(data[i + 1][selectedColumn]) -
+      parseFloat(data[i][selectedColumn]);
+    localPlottingData.push([i, value]);
+  }
+  return localPlottingData;
+};
+
+const parseNoDiff = (data, selectedColumn) => {
+  const localPlottingData = [];
+  for (let i = 1; i < data.length; i++) {
+    const value = parseFloat(data[i][selectedColumn]);
+    localPlottingData.push([i, value]);
+  }
+  return localPlottingData;
+};
 const Tachogram = ({ selectedColumn, data }) => {
+  const diff = true;
   const [plottingData, setPlottingData] = useState(null);
   useEffect(() => {
-    console.log("in use effect");
-    console.log("data length", data.length);
-    if (data) {
-      const localPlottingData = [];
-      for (let i = 1; i < data.length - 1; i++) {
-        const value =
-          parseFloat(data[i + 1][selectedColumn]) -
-          parseFloat(data[i][selectedColumn]);
-        localPlottingData.push([i, value]);
+    if (data && selectedColumn >= 0) {
+      if (diff) {
+        setPlottingData(parseDiff(data, selectedColumn));
+      } else {
+        setPlottingData(parseNoDiff(data, selectedColumn));
       }
-
-      setPlottingData(localPlottingData);
     }
-  }, [data, selectedColumn]);
+  }, [data, selectedColumn, diff]);
   console.log("plotting Data", plottingData);
   // new Dygraph(document.getElementById("graphdiv"), data, {
   //   title: "Time Series with Final Range Logging",
