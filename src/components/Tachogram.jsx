@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
 import Dygraph from "dygraphs";
 
-const logRange = (minDate, maxDate, label) => {
-  let start = new Date(minDate).toISOString().split("T")[0];
-  let end = new Date(maxDate).toISOString().split("T")[0];
+const logRange = (min, max, label) => {
+  let start = min;
+  let end = max;
   console.log(label + ": " + start + " to " + end);
 };
 
@@ -62,19 +62,13 @@ const Tachogram = ({ selectedColumn, data }) => {
             },
           },
           showRangeSelector: true,
-          // Set an initial date window different from the data extremes
-          // so that slider interaction is more evident.
-          rangeSelectorCallback: function (minDate, maxDate, yRanges) {
-            // callback fired during slider interaction.
-            logRange(minDate, maxDate, "Range Selector Callback");
-            console.log("2");
-          },
           zoomCallback: function (minDate, maxDate, yRanges) {
             // this callback is fired when the main view (zoom) is updated,
             // which happens after the user has finished moving the slider.
             logRange(minDate, maxDate, "Zoom Callback");
-            console.log("1");
+            console.log("2");
           },
+          rangeSelectorHeight: 150,
         },
       );
     }
@@ -85,7 +79,17 @@ const Tachogram = ({ selectedColumn, data }) => {
       }
     };
   }, [plottingData]);
-  return <div id="graphdiv" style={{ width: "100%", height: "300px" }}></div>;
+  return (
+    <div
+      id="graphdiv"
+      style={{
+        width: "95%",
+        height: 300,
+        marginLeft: 30,
+        marginRight: 30,
+      }}
+    ></div>
+  );
 };
 
 export default Tachogram;

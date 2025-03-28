@@ -139,7 +139,6 @@ const CSVReader = () => {
       {headers.length > 0 && (
         <div style={{ marginTop: "16px", fontSize: "0.8rem", color: "#666" }}>
           <p>Detected columns: {headers.join(", ")}</p>
-          <p>Loaded {data.length} rows</p>
         </div>
       )}
     </div>
