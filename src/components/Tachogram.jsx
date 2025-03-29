@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import Dygraph from "dygraphs";
+import Button from "@mui/material/Button";
 
 const parseDiff = (data, selectedColumn) => {
   const localPlottingData = [];
@@ -110,7 +111,14 @@ const Tachogram = ({ selectedColumn, data, filename }) => {
           marginRight: 30,
         }}
       ></div>
-      <button onClick={handleCut}>Cut and export</button>
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={handleCut}
+        style={{ margin: "20px 0" }}
+      >
+        Cut and export
+      </Button>
     </>
   );
 };

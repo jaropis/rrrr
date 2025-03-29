@@ -10,6 +10,7 @@ import {
   InputLabel,
   Box,
   Typography,
+  IconButton,
 } from "@mui/material";
 import Tachogram from "./Tachogram";
 
@@ -22,11 +23,12 @@ const CSVReader = () => {
   const [colWidth, setColWidth] = useState(120);
   const [fullData, setFullData] = useState(null);
   const [filename, setFilename] = useState(null);
-  const [separator, setSeparator] = useState("\t"); // Default separator (whitespace)
-  const [customFilename, setCustomFilename] = useState("_cut"); // Custom filename input
+  const [separator, setSeparator] = useState("\t");
+  const [customFilename, setCustomFilename] = useState("_cut");
+  const [isTableExpanded, setIsTableExpanded] = useState(true);
   const rowsToShow = 6;
 
-  // File input ref to trigger the hidden input
+  // file input ref to trigger the hidden input
   const fileInputRef = React.useRef(null);
 
   const handleFileUpload = (event) => {
@@ -95,7 +97,13 @@ const CSVReader = () => {
     const selectedColumnNumber = headers.indexOf(selectedColumn);
     setSelectedColumnNo(selectedColumnNumber);
   }, [headers, selectedColumn]);
-  // Define columns for DataGrid
+
+  // toggling table expansion
+  const toggleTableExpansion = () => {
+    setIsTableExpanded(!isTableExpanded);
+  };
+
+  // defining columns for DataGrid
   const columns = headers.map((header) => ({
     field: header,
     headerName: header.charAt(0).toUpperCase() + header.slice(1),
@@ -107,12 +115,16 @@ const CSVReader = () => {
         <Radio
           checked={selectedColumn === header}
           size="small"
-          onChange={(e) => setSelectedColumn(header)}
+          onChange={(e) => {
+            setSelectedColumn(header);
+            setIsTableExpanded(false); // automatically collapsing table when a column is selected
+          }}
         />
         {params.colDef.headerName}
       </div>
     ),
   }));
+
   return (
     <div>
       <Typography variant="h4">Data File Reader</Typography>
@@ -125,6 +137,7 @@ const CSVReader = () => {
         sx={{
           display: "flex",
           alignItems: "center",
+          justifyContent: "center",
           gap: "20px",
           flexWrap: "wrap",
           marginBottom: 2,
@@ -178,20 +191,37 @@ const CSVReader = () => {
       {/* error display */}
       {error && <Typography color="error">{error}</Typography>}
 
-      {/* DataGrid display */}
+      {/* DataGrid display with collapsible functionality */}
       {data.length > 0 && (
         <div>
-          <div style={{ height: 420, width: "100%" }}>
-            <DataGrid
-              rows={data}
-              columns={columns}
-              pageSizeOptions={[5, 10, 25]}
-              initialState={{
-                pagination: null,
-              }}
-              disableColumnMenu
-            />
-          </div>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              mb: 1,
+              borderBottom: "1px solid #ddd",
+              justifyContent: "space-between",
+            }}
+          >
+            <Typography variant="h6">Data Preview: {filename}</Typography>
+            <IconButton onClick={toggleTableExpansion}>
+              {isTableExpanded ? "−" : "+"}
+            </IconButton>
+          </Box>
+
+          {isTableExpanded && (
+            <div style={{ height: 420, width: "100%" }}>
+              <DataGrid
+                rows={data}
+                columns={columns}
+                pageSizeOptions={[5, 10, 25]}
+                initialState={{
+                  pagination: null,
+                }}
+                disableColumnMenu
+              />
+            </div>
+          )}
           <Tachogram
             selectedColumn={selectedColumnNo}
             data={fullData}
