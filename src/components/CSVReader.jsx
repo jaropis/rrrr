@@ -1,6 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { DataGrid } from "@mui/x-data-grid";
-import { Radio } from "@mui/material";
+import {
+  Radio,
+  Button,
+  TextField,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  Box,
+  Typography,
+} from "@mui/material";
 import Tachogram from "./Tachogram";
 
 const CSVReader = () => {
@@ -15,6 +25,9 @@ const CSVReader = () => {
   const [separator, setSeparator] = useState("\t"); // Default separator (whitespace)
   const [customFilename, setCustomFilename] = useState("_cut"); // Custom filename input
   const rowsToShow = 6;
+
+  // File input ref to trigger the hidden input
+  const fileInputRef = React.useRef(null);
 
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
@@ -102,68 +115,68 @@ const CSVReader = () => {
   }));
   return (
     <div>
-      <h2>Data File Reader</h2>
-      <h3>
+      <Typography variant="h4">Data File Reader</Typography>
+      <Typography variant="h6" gutterBottom>
         Your data are analyzed in your browser, they never leave your computer
-      </h3>
+      </Typography>
 
       {/* Input controls in a single row */}
-      <div
-        style={{
+      <Box
+        sx={{
           display: "flex",
           alignItems: "center",
-          justifyContent: "center",
           gap: "20px",
           flexWrap: "wrap",
-          marginBottom: "16px",
+          marginBottom: 2,
         }}
       >
-        <div>
-          <label htmlFor="file" style={{ marginRight: "5px" }}>
-            Select a file
-          </label>
+        <Box>
           <input
             type="file"
             accept=".txt,.csv,.tsv,.dat,.rea"
             onChange={handleFileUpload}
+            style={{ display: "none" }}
+            id="file-input"
+            ref={fileInputRef}
           />
-        </div>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => fileInputRef.current.click()}
+          >
+            Select a file
+          </Button>
+        </Box>
 
-        <div>
-          <label htmlFor="separator" style={{ marginRight: "5px" }}>
-            Select separator:{" "}
-          </label>
-          <select
+        <FormControl sx={{ minWidth: 180 }}>
+          <InputLabel id="separator-label">Separator</InputLabel>
+          <Select
+            labelId="separator-label"
             id="separator"
             value={separator}
+            label="Separator"
             onChange={(e) => setSeparator(e.target.value)}
           >
-            <option value="\\t">Tab</option>
-            <option value="\\s+">Whitespace</option>
-            <option value=",">Comma (,)</option>
-            <option value=";">Semicolon (;)</option>
-          </select>
-        </div>
+            <MenuItem value="\\t">Tab</MenuItem>
+            <MenuItem value="\\s+">Whitespace</MenuItem>
+            <MenuItem value=",">Comma (,)</MenuItem>
+            <MenuItem value=";">Semicolon (;)</MenuItem>
+          </Select>
+        </FormControl>
 
-        <div>
-          <label htmlFor="customFilename" style={{ marginRight: "5px" }}>
-            Custom filename:{" "}
-          </label>
-          <input
-            type="text"
-            id="customFilename"
-            value={customFilename}
-            onChange={(e) => setCustomFilename(e.target.value)}
-            placeholder="Enter a text"
-          />
-        </div>
-      </div>
+        <TextField
+          id="customFilename"
+          label="Custom filename"
+          variant="outlined"
+          size="small"
+          value={customFilename}
+          onChange={(e) => setCustomFilename(e.target.value)}
+          placeholder="Enter a text"
+        />
+      </Box>
 
       {/* error display */}
-      {error && <p style={{ color: "red" }}>{error}</p>}
-
-      {/* upload prompt 
-      {data.length === 0 && !error && <p>Upload a file to see preview</p>}*/}
+      {error && <Typography color="error">{error}</Typography>}
 
       {/* DataGrid display */}
       {data.length > 0 && (
@@ -189,9 +202,11 @@ const CSVReader = () => {
 
       {/* debug info */}
       {headers.length > 0 && (
-        <div style={{ marginTop: "16px", fontSize: "0.8rem", color: "#666" }}>
-          <p>Detected columns: {headers.join(", ")}</p>
-        </div>
+        <Box sx={{ marginTop: 2, fontSize: "0.8rem", color: "#666" }}>
+          <Typography variant="body2">
+            Detected columns: {headers.join(", ")}
+          </Typography>
+        </Box>
       )}
     </div>
   );
