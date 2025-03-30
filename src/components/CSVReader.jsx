@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { DataGrid } from "@mui/x-data-grid";
 import {
   Radio,
@@ -66,57 +66,60 @@ const CSVReader = ({
   // file input ref to trigger the hidden input
   const fileInputRef = React.useRef(null);
 
-  const processFile = (file) => {
-    if (!file) return;
+  const processFile = useCallback(
+    (file) => {
+      if (!file) return;
 
-    const reader = new FileReader();
+      const reader = new FileReader();
 
-    reader.onload = (e) => {
-      try {
-        const content = e.target.result;
-        const lines = content
-          .split(/\r?\n/)
-          .filter((line) => line.trim().length > 0);
+      reader.onload = (e) => {
+        try {
+          const content = e.target.result;
+          const lines = content
+            .split(/\r?\n/)
+            .filter((line) => line.trim().length > 0);
 
-        if (lines.length === 0) {
-          throw new Error("File is empty");
-        }
+          if (lines.length === 0) {
+            throw new Error("File is empty");
+          }
 
-        // parsing all lines with the selected separator
-        const parsedLines = lines.map((line) =>
-          line
-            .split(new RegExp(getSeparatorValue(separator)))
-            .filter((part) => part.trim().length > 0),
-        );
+          // parsing all lines with the selected separator
+          const parsedLines = lines.map((line) =>
+            line
+              .split(new RegExp(getSeparatorValue(separator)))
+              .filter((part) => part.trim().length > 0),
+          );
 
-        const parsedHeaders = parsedLines[0];
-        const parsedData = parsedLines.slice(1);
-        setFullData(parsedLines);
-        setHeaders(parsedHeaders);
+          const parsedHeaders = parsedLines[0];
+          const parsedData = parsedLines.slice(1);
+          setFullData(parsedLines);
+          setHeaders(parsedHeaders);
 
-        // creating grid data
-        const gridData = parsedData.slice(0, rowsToShow).map((row, index) => {
-          const rowData = { id: index };
+          // creating grid data
+          const gridData = parsedData.slice(0, rowsToShow).map((row, index) => {
+            const rowData = { id: index };
 
-          parsedHeaders.forEach((header, colIndex) => {
-            rowData[header] = colIndex < row.length ? row[colIndex] : "";
+            parsedHeaders.forEach((header, colIndex) => {
+              rowData[header] = colIndex < row.length ? row[colIndex] : "";
+            });
+
+            return rowData;
           });
+          setData(gridData);
+        } catch (err) {
+          setError(`Failed to process file: ${err.message}`);
+          console.error("Error processing file:", err);
+        }
+      };
 
-          return rowData;
-        });
-        setData(gridData);
-      } catch (err) {
-        setError(`Failed to process file: ${err.message}`);
-        console.error("Error processing file:", err);
-      }
-    };
+      reader.onerror = () => {
+        setError("Error reading file");
+      };
 
-    reader.onerror = () => {
-      setError("Error reading file");
-    };
-
-    reader.readAsText(file);
-  };
+      reader.readAsText(file);
+    },
+    [separator, setFullData, setHeaders, setData, setError, rowsToShow],
+  );
 
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
