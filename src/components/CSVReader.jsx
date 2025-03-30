@@ -11,6 +11,8 @@ import {
   Box,
   Typography,
   IconButton,
+  Checkbox,
+  FormControlLabel,
 } from "@mui/material";
 
 const isColumnValid = (selectedColumn, fullData) => {
@@ -31,6 +33,8 @@ const CSVReader = ({
   setFilename,
   customFilename,
   setCustomFilename,
+  diff,
+  setDiff,
 }) => {
   const [data, setData] = useState([]);
   const [headers, setHeaders] = useState([]);
@@ -221,6 +225,17 @@ const CSVReader = ({
           value={customFilename}
           onChange={(e) => setCustomFilename(e.target.value)}
           placeholder="Enter a text"
+        />
+
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={diff}
+              onChange={(e) => setDiff(e.target.checked)}
+              color="primary"
+            />
+          }
+          label="Extract RRs"
         />
       </Box>
 

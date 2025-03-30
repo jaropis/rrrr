@@ -22,21 +22,25 @@ const parseNoDiff = (data, selectedColumn) => {
   return localPlottingData;
 };
 
-const Tachogram = ({ selectedColumn, data, filename }) => {
+const Tachogram = ({ selectedColumn, data, filename, diff }) => {
   const logRange = (min, max, label) => {
     setMinmax([min, max]);
   };
   const handleCut = (e) => {
     e.preventDefault();
     let cutData = data.slice(minmax[0], minmax[1]);
-
+    let cutPlottingData = plottingData.slice(minmax[0], minmax[1]);
     console.log(plottingData);
     let header = data[0];
     if (diff) {
       header.push("RR");
-      let cutPlottingData = plottingData.slice(minmax[0], minmax[1]);
+
       for (let idx = 0; idx < cutData.length; idx++) {
         cutData[idx].push(cutPlottingData[idx][1].toFixed(3));
+      }
+    } else {
+      for (let idx = 0; idx < cutData.length; idx++) {
+        cutData[idx][selectedColumn] = cutPlottingData[idx][1];
       }
     }
 
@@ -58,7 +62,7 @@ const Tachogram = ({ selectedColumn, data, filename }) => {
     // cleanup
     URL.revokeObjectURL(url);
   };
-  const diff = true;
+
   const [plottingData, setPlottingData] = useState(null);
   const [minmax, setMinmax] = useState([]);
   const tachoGraph = useRef();

@@ -7,6 +7,7 @@ function App() {
   const [selectedColumnNo, setSelectedColumnNo] = useState(null);
   const [filename, setFilename] = useState(null);
   const [customFilename, setCustomFilename] = useState("Cut_");
+  const [diff, setDiff] = useState(false);
   return (
     <div className="App">
       <CSVReader
@@ -17,12 +18,15 @@ function App() {
         setFilename={setFilename}
         customFilename={customFilename}
         setCustomFilename={setCustomFilename}
+        diff={diff}
+        setDiff={setDiff}
       />
       {selectedColumnNo >= 0 && (
         <Tachogram
           selectedColumn={selectedColumnNo}
           data={fullData}
           filename={customFilename ? customFilename + filename : filename} // Use custom filename if provided
+          diff={diff}
         />
       )}
     </div>
