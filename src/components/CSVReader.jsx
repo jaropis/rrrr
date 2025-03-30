@@ -285,6 +285,9 @@ const CSVReader = ({
               mb: 1,
               borderBottom: "1px solid #ddd",
               justifyContent: "space-between",
+              width: "95%",
+              marginLeft: "auto",
+              marginRight: "auto",
             }}
           >
             <Typography variant="h6">Data Preview: {filename}</Typography>
@@ -294,7 +297,14 @@ const CSVReader = ({
           </Box>
 
           {isTableExpanded && (
-            <div style={{ height: 420, width: "100%" }}>
+            <div
+              style={{
+                height: 420,
+                width: "95%",
+                marginLeft: "auto",
+                marginRight: "auto",
+              }}
+            >
               <DataGrid
                 rows={data}
                 columns={columns}
