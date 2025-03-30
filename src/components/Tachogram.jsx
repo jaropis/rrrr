@@ -2,27 +2,28 @@ import React, { useState, useEffect, useRef } from "react";
 import Dygraph from "dygraphs";
 import Button from "@mui/material/Button";
 
-const parseDiff = (data, selectedColumn) => {
+const parseDiff = (data, selectedColumn, scaleDataBy) => {
   const localPlottingData = [];
   for (let i = 1; i < data.length - 1; i++) {
     const value =
-      parseFloat(data[i + 1][selectedColumn]) -
-      parseFloat(data[i][selectedColumn]);
+      (parseFloat(data[i + 1][selectedColumn]) -
+        parseFloat(data[i][selectedColumn])) *
+      scaleDataBy;
     localPlottingData.push([i, value]);
   }
   return localPlottingData;
 };
 
-const parseNoDiff = (data, selectedColumn) => {
+const parseNoDiff = (data, selectedColumn, scaleDataBy) => {
   const localPlottingData = [];
   for (let i = 1; i < data.length; i++) {
-    const value = parseFloat(data[i][selectedColumn]);
+    const value = parseFloat(data[i][selectedColumn]) * scaleDataBy;
     localPlottingData.push([i, value]);
   }
   return localPlottingData;
 };
 
-const Tachogram = ({ selectedColumn, data, filename, diff }) => {
+const Tachogram = ({ selectedColumn, data, filename, diff, scaleDataBy }) => {
   const logRange = (min, max, label) => {
     setMinmax([min, max]);
   };
@@ -69,12 +70,12 @@ const Tachogram = ({ selectedColumn, data, filename, diff }) => {
   useEffect(() => {
     if (data && selectedColumn >= 0) {
       if (diff) {
-        setPlottingData(parseDiff(data, selectedColumn));
+        setPlottingData(parseDiff(data, selectedColumn, scaleDataBy));
       } else {
-        setPlottingData(parseNoDiff(data, selectedColumn));
+        setPlottingData(parseNoDiff(data, selectedColumn), scaleDataBy);
       }
     }
-  }, [data, selectedColumn, diff]);
+  }, [data, selectedColumn, diff, scaleDataBy]);
 
   useEffect(() => {
     if (plottingData && plottingData.length > 0) {

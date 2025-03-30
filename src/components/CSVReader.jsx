@@ -35,6 +35,8 @@ const CSVReader = ({
   setCustomFilename,
   diff,
   setDiff,
+  scaleDataBy,
+  setScaleDataBy,
 }) => {
   const [data, setData] = useState([]);
   const [headers, setHeaders] = useState([]);
@@ -236,6 +238,20 @@ const CSVReader = ({
             />
           }
           label="Extract RRs"
+        />
+
+        <TextField
+          id="scaleDataBy"
+          label="Scale data by"
+          variant="outlined"
+          size="small"
+          type="number"
+          inputProps={{
+            step: "0.01",
+            min: "0.01",
+          }}
+          value={scaleDataBy}
+          onChange={(e) => setScaleDataBy(Number(e.target.value))}
         />
       </Box>
 
