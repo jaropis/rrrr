@@ -29,7 +29,18 @@ const Tachogram = ({ selectedColumn, data, filename }) => {
   const handleCut = (e) => {
     e.preventDefault();
     let cutData = data.slice(minmax[0], minmax[1]);
-    cutData.splice(0, 0, data[0]);
+
+    console.log(plottingData);
+    let header = data[0];
+    if (diff) {
+      header.push("RR");
+      let cutPlottingData = plottingData.slice(minmax[0], minmax[1]);
+      for (let idx = 0; idx < cutData.length; idx++) {
+        cutData[idx].push(cutPlottingData[idx][1].toFixed(3));
+      }
+    }
+
+    cutData.splice(0, 0, header);
 
     const csvContent = cutData.map((row) => row.join("\t")).join("\n");
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });

@@ -1,5 +1,5 @@
 import "./App.css";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import CSVReader from "./components/CSVReader";
 import Tachogram from "./components/Tachogram";
 function App() {
@@ -7,9 +7,6 @@ function App() {
   const [selectedColumnNo, setSelectedColumnNo] = useState(null);
   const [filename, setFilename] = useState(null);
   const [customFilename, setCustomFilename] = useState("Cut_");
-  useEffect(() => {
-    console.log("selectedColumnNo", selectedColumnNo);
-  });
   return (
     <div className="App">
       <CSVReader
