@@ -10,7 +10,6 @@ const parseDiff = (data, selectedColumn) => {
       parseFloat(data[i][selectedColumn]);
     localPlottingData.push([i, value]);
   }
-  console.log("localPlottingData", localPlottingData);
   return localPlottingData;
 };
 
@@ -25,7 +24,6 @@ const parseNoDiff = (data, selectedColumn) => {
 
 const Tachogram = ({ selectedColumn, data, filename }) => {
   const logRange = (min, max, label) => {
-    console.log(min, max);
     setMinmax([min, max]);
   };
   const handleCut = (e) => {
@@ -87,7 +85,6 @@ const Tachogram = ({ selectedColumn, data, filename }) => {
             // this callback is fired when the main view (zoom) is updated,
             // which happens after the user has finished moving the slider.
             logRange(minDate, maxDate, "Zoom Callback");
-            console.log("2");
           },
           rangeSelectorHeight: 150,
         },

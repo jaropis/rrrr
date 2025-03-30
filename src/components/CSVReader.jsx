@@ -12,9 +12,19 @@ import {
   Typography,
   IconButton,
 } from "@mui/material";
-import Tachogram from "./Tachogram";
 
+const isColumnValid = (selectedColumn, fullData) => {
+  let columnIsValid = false;
+  // checking the first
+  for (let idx = 0; idx < Math.min(100, fullData.length); idx++) {
+    if (parseFloat(fullData[idx][selectedColumn])) {
+      columnIsValid = true;
+    }
+  }
+  return columnIsValid;
+};
 const CSVReader = ({
+  fullData,
   setFullData,
   setSelectedColumnNo,
   filename,
@@ -29,12 +39,8 @@ const CSVReader = ({
   const [colWidth, setColWidth] = useState(120);
   const [separator, setSeparator] = useState("tab");
   const [isTableExpanded, setIsTableExpanded] = useState(true);
-  const [shouldProceed, setShouldProceed] = useState(false);
   const rowsToShow = 6;
 
-  useEffect(() => {
-    console.log("customFilename", customFilename);
-  }, [customFilename]);
   const getSeparatorValue = (sep) => {
     switch (sep) {
       case "tab":
@@ -80,7 +86,6 @@ const CSVReader = ({
 
           const parsedHeaders = parsedLines[0];
           const parsedData = parsedLines.slice(1);
-          console.log("setFullData:", setFullData);
           setFullData(parsedLines);
           setHeaders(parsedHeaders);
 
@@ -94,7 +99,6 @@ const CSVReader = ({
 
             return rowData;
           });
-
           setData(gridData);
         } catch (err) {
           setError(`Failed to process file: ${err.message}`);
@@ -139,8 +143,17 @@ const CSVReader = ({
           checked={selectedColumn === header}
           size="small"
           onChange={(e) => {
-            setSelectedColumn(header);
-            setIsTableExpanded(false); // automatically collapsing table when a column is selected
+            const columnIsValid = isColumnValid(
+              headers.indexOf(header),
+              fullData,
+            );
+            if (columnIsValid) {
+              setIsTableExpanded(false);
+              setSelectedColumn(header);
+            } else {
+              setIsTableExpanded(true);
+              setSelectedColumn(null);
+            } // automatically collapsing table when a column is selected
           }}
         />
         {params.colDef.headerName}

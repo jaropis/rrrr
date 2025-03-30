@@ -7,9 +7,13 @@ function App() {
   const [selectedColumnNo, setSelectedColumnNo] = useState(null);
   const [filename, setFilename] = useState(null);
   const [customFilename, setCustomFilename] = useState("Cut_");
+  useEffect(() => {
+    console.log("selectedColumnNo", selectedColumnNo);
+  });
   return (
     <div className="App">
       <CSVReader
+        fullData={fullData}
         setFullData={setFullData}
         setSelectedColumnNo={setSelectedColumnNo}
         filename={filename}
@@ -17,11 +21,13 @@ function App() {
         customFilename={customFilename}
         setCustomFilename={setCustomFilename}
       />
-      <Tachogram
-        selectedColumn={selectedColumnNo}
-        data={fullData}
-        filename={customFilename ? customFilename + filename : filename} // Use custom filename if provided
-      />
+      {selectedColumnNo >= 0 && (
+        <Tachogram
+          selectedColumn={selectedColumnNo}
+          data={fullData}
+          filename={customFilename ? customFilename + filename : filename} // Use custom filename if provided
+        />
+      )}
     </div>
   );
 }
