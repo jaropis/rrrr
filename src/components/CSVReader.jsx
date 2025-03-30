@@ -14,19 +14,41 @@ import {
 } from "@mui/material";
 import Tachogram from "./Tachogram";
 
-const CSVReader = () => {
+const CSVReader = ({
+  setFullData,
+  setSelectedColumnNo,
+  filename,
+  setFilename,
+  customFilename,
+  setCustomFilename,
+}) => {
   const [data, setData] = useState([]);
   const [headers, setHeaders] = useState([]);
   const [error, setError] = useState(null);
   const [selectedColumn, setSelectedColumn] = useState(null);
-  const [selectedColumnNo, setSelectedColumnNo] = useState(null);
   const [colWidth, setColWidth] = useState(120);
-  const [fullData, setFullData] = useState(null);
-  const [filename, setFilename] = useState(null);
-  const [separator, setSeparator] = useState("\t");
-  const [customFilename, setCustomFilename] = useState("_cut");
+  const [separator, setSeparator] = useState("tab");
   const [isTableExpanded, setIsTableExpanded] = useState(true);
+  const [shouldProceed, setShouldProceed] = useState(false);
   const rowsToShow = 6;
+
+  useEffect(() => {
+    console.log("customFilename", customFilename);
+  }, [customFilename]);
+  const getSeparatorValue = (sep) => {
+    switch (sep) {
+      case "tab":
+        return "\t";
+      case "whitespace":
+        return "\\s+";
+      case "comma":
+        return ",";
+      case "semicolon":
+        return ";";
+      default:
+        return "\t";
+    }
+  };
 
   // file input ref to trigger the hidden input
   const fileInputRef = React.useRef(null);
@@ -48,16 +70,17 @@ const CSVReader = () => {
           if (lines.length === 0) {
             throw new Error("File is empty");
           }
-          console.log("e.target.result", Object.getOwnPropertyNames(e.target));
+
           // parsing all lines with the selected separator
           const parsedLines = lines.map((line) =>
             line
-              .split(new RegExp(separator))
+              .split(new RegExp(getSeparatorValue(separator)))
               .filter((part) => part.trim().length > 0),
           );
 
           const parsedHeaders = parsedLines[0];
           const parsedData = parsedLines.slice(1);
+          console.log("setFullData:", setFullData);
           setFullData(parsedLines);
           setHeaders(parsedHeaders);
 
@@ -96,7 +119,7 @@ const CSVReader = () => {
   useEffect(() => {
     const selectedColumnNumber = headers.indexOf(selectedColumn);
     setSelectedColumnNo(selectedColumnNumber);
-  }, [headers, selectedColumn]);
+  }, [headers, selectedColumn, setSelectedColumnNo]);
 
   // toggling table expansion
   const toggleTableExpansion = () => {
@@ -170,10 +193,10 @@ const CSVReader = () => {
             label="Separator"
             onChange={(e) => setSeparator(e.target.value)}
           >
-            <MenuItem value="\\t">Tab</MenuItem>
-            <MenuItem value="\\s+">Whitespace</MenuItem>
-            <MenuItem value=",">Comma (,)</MenuItem>
-            <MenuItem value=";">Semicolon (;)</MenuItem>
+            <MenuItem value="tab">Tab</MenuItem>
+            <MenuItem value="whitespace">Whitespace</MenuItem>
+            <MenuItem value="comma">Comma (,)</MenuItem>
+            <MenuItem value="semicolon">Semicolon (;)</MenuItem>
           </Select>
         </FormControl>
 
@@ -222,11 +245,6 @@ const CSVReader = () => {
               />
             </div>
           )}
-          <Tachogram
-            selectedColumn={selectedColumnNo}
-            data={fullData}
-            filename={customFilename || filename} // Use custom filename if provided
-          />
         </div>
       )}
 

@@ -41,7 +41,7 @@ const Tachogram = ({ selectedColumn, data, filename }) => {
     link.href = url;
     const cutFilename = filename.split(".");
     const downloadFilename =
-      cutFilename[0] + "_cut" + (cutFilename[1] ? "." + cutFilename[1] : null);
+      cutFilename[0] + (cutFilename[1] ? "." + cutFilename[1] : null);
     link.download = downloadFilename;
     document.body.append(link);
     link.click();
