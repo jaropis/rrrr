@@ -1,5 +1,6 @@
 import "./App.css";
 import React, { useState } from "react";
+import { Typography } from "@mui/material";
 import CSVReader from "./components/CSVReader";
 import Tachogram from "./components/Tachogram";
 function App() {
@@ -11,6 +12,10 @@ function App() {
   const [scaleDataBy, setScaleDataBy] = useState(1);
   return (
     <div className="App">
+      <Typography variant="h4">R-RR-eR</Typography>
+      <Typography variant="h6" gutterBottom>
+        Your data are analyzed in your browser, they never leave your computer
+      </Typography>
       <CSVReader
         fullData={fullData}
         setFullData={setFullData}

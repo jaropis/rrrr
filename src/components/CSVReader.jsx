@@ -186,11 +186,6 @@ const CSVReader = ({
 
   return (
     <div>
-      <Typography variant="h4">RR TS Editor</Typography>
-      <Typography variant="h6" gutterBottom>
-        Your data are analyzed in your browser, they never leave your computer
-      </Typography>
-
       {/* Input controls in a single row */}
       <Box
         sx={{
