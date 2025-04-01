@@ -87,7 +87,8 @@ const Tachogram = ({ selectedColumn, data, filename, diff, scaleDataBy }) => {
   const [plottingData, setPlottingData] = useState(null);
   const [minmax, setMinmax] = useState([]);
   const [startingTime, setStartingTime] = useState("00:00:00");
-  const [endingTime, setEndingTime] = useState(null);
+  const [windowStartingTime, setWindowStartingTime] = useState("00:00:00");
+  const [windowEndingTime, setWindowEndingTime] = useState(null);
   const tachoGraph = useRef();
   useEffect(() => {
     if (data && selectedColumn >= 0) {
@@ -135,9 +136,13 @@ const Tachogram = ({ selectedColumn, data, filename, diff, scaleDataBy }) => {
       };
 
       // conditionally add dateWindow property
-      if (endingTime !== null && endingTime > startingTime) {
-        const startTime = createDateFromTimeString(startingTime);
-        const endTimeDate = createDateFromTimeString(endingTime); // assuming endTime is in minutes
+      if (
+        windowEndingTime !== null &&
+        windowEndingTime > startingTime &&
+        windowEndingTime > windowStartingTime
+      ) {
+        const startTime = createDateFromTimeString(windowStartingTime);
+        const endTimeDate = createDateFromTimeString(windowEndingTime); // assuming endTime is in minutes
         graphOptions.dateWindow = [startTime.getTime(), endTimeDate.getTime()];
       }
 
@@ -154,7 +159,7 @@ const Tachogram = ({ selectedColumn, data, filename, diff, scaleDataBy }) => {
         tachoGraph.current = null;
       }
     };
-  }, [plottingData, startingTime, endingTime]);
+  }, [plottingData, startingTime, windowEndingTime, windowStartingTime]);
   return (
     <>
       <Box
@@ -172,9 +177,13 @@ const Tachogram = ({ selectedColumn, data, filename, diff, scaleDataBy }) => {
         </Typography>
         <TimeInput time={startingTime} setTime={setStartingTime} />
         <Typography variant="h6" gutterBottom>
-          Ending time:
+          Window start time:
         </Typography>
-        <TimeInput time={endingTime} setTime={setEndingTime} />
+        <TimeInput time={windowStartingTime} setTime={setWindowStartingTime} />
+        <Typography variant="h6" gutterBottom>
+          Window end time:
+        </Typography>
+        <TimeInput time={windowEndingTime} setTime={setWindowEndingTime} />
       </Box>
       <div
         id="graphdiv"
