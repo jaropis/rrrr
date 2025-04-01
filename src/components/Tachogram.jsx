@@ -9,16 +9,18 @@ const parseDiff = (data, selectedColumn, scaleDataBy) => {
       (parseFloat(data[i + 1][selectedColumn]) -
         parseFloat(data[i][selectedColumn])) *
       scaleDataBy;
-    localPlottingData.push([i, value]);
+    localPlottingData.push([data[i + 1], value]);
   }
   return localPlottingData;
 };
 
 const parseNoDiff = (data, selectedColumn, scaleDataBy) => {
   const localPlottingData = [];
+  let cumulativeTime = 0;
   for (let i = 1; i < data.length; i++) {
     const value = parseFloat(data[i][selectedColumn]) * scaleDataBy;
-    localPlottingData.push([i, value]);
+    cumulativeTime = cumulativeTime + data[i][selectedColumn];
+    localPlottingData.push([cumulativeTime, value]);
   }
   return localPlottingData;
 };
@@ -79,21 +81,33 @@ const Tachogram = ({ selectedColumn, data, filename, diff, scaleDataBy }) => {
 
   useEffect(() => {
     if (plottingData && plottingData.length > 0) {
+      console.log(plottingData);
+      const processedData = plottingData.map((point) => {
+        // creating a new date and adding the seconds
+        const date = new Date(0);
+        date.setSeconds(point[0]);
+        return [date, point[1]];
+      });
+      // console.log("processedData", processedData);
       tachoGraph.current = new Dygraph(
         document.getElementById("graphdiv"),
-        plottingData,
+        processedData,
         {
           title: "",
           legend: "always",
-          labels: ["N", "RR"],
-          xlabel: "Beat Index",
+          labels: ["t", "RR"],
+          xlabel: "Time",
           ylabel: "RR",
-          x: {
-            axisLabelFormatter: function (x) {
-              return x.toFixed(0);
-            },
-            valueFormatter: function (x) {
-              return x.toFixed(0);
+          axes: {
+            x: {
+              valueFormatter: function (ms) {
+                const date = new Date(ms);
+                return date.toTimeString().substring(0, 8); // HH:MM:SS format
+              },
+              axisLabelFormatter: function (ms) {
+                const date = new Date(ms);
+                return date.toTimeString().substring(0, 8); // HH:MM:SS format
+              },
             },
           },
           showRangeSelector: true,
