@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import Dygraph from "dygraphs";
 import Button from "@mui/material/Button";
 import TimeInput from "./TimeInput";
+import { Box, Typography } from "@mui/material";
 
 function createDateFromTimeString(timeString) {
   // parsing the time string (HH:MM:SS)
@@ -107,38 +108,44 @@ const Tachogram = ({ selectedColumn, data, filename, diff, scaleDataBy }) => {
         const date = new Date(newTimestamp);
         return [date, point[1]];
       });
-      const endWindowTime = endingTime
-        ? createDateFromTimeString(endingTime)
-        : endingTime;
+
+      const graphOptions = {
+        title: "",
+        legend: "always",
+        labels: ["t", "RR"],
+        xlabel: "Time",
+        ylabel: "RR",
+        axes: {
+          x: {
+            valueFormatter: function (ms) {
+              const date = new Date(ms);
+              return date.toTimeString().substring(0, 8); // HH:MM:SS format
+            },
+            axisLabelFormatter: function (ms) {
+              const date = new Date(ms);
+              return date.toTimeString().substring(0, 8); // HH:MM:SS format
+            },
+          },
+        },
+        showRangeSelector: true,
+        zoomCallback: function (minDate, maxDate, yRanges) {
+          logRange(minDate, maxDate, "Zoom Callback");
+        },
+        rangeSelectorHeight: 150,
+      };
+
+      // conditionally add dateWindow property
+      if (endingTime !== null && endingTime > startingTime) {
+        const startTime = createDateFromTimeString(startingTime);
+        const endTimeDate = createDateFromTimeString(endingTime); // assuming endTime is in minutes
+        graphOptions.dateWindow = [startTime.getTime(), endTimeDate.getTime()];
+      }
+
+      // creating the graph with the possibly modified options
       tachoGraph.current = new Dygraph(
         document.getElementById("graphdiv"),
         processedData,
-        {
-          title: "",
-          legend: "always",
-          labels: ["t", "RR"],
-          xlabel: "Time",
-          ylabel: "RR",
-          axes: {
-            x: {
-              valueFormatter: function (ms) {
-                const date = new Date(ms);
-                return date.toTimeString().substring(0, 8); // HH:MM:SS format
-              },
-              axisLabelFormatter: function (ms) {
-                const date = new Date(ms);
-                return date.toTimeString().substring(0, 8); // HH:MM:SS format
-              },
-            },
-          },
-          showRangeSelector: true,
-          zoomCallback: function (minDate, maxDate, yRanges) {
-            // this callback is fired when the main view (zoom) is updated,
-            // which happens after the user has finished moving the slider.
-            logRange(minDate, maxDate, "Zoom Callback");
-          },
-          rangeSelectorHeight: 150,
-        },
+        graphOptions,
       );
     }
     return () => {
@@ -147,14 +154,28 @@ const Tachogram = ({ selectedColumn, data, filename, diff, scaleDataBy }) => {
         tachoGraph.current = null;
       }
     };
-  }, [plottingData, startingTime]);
+  }, [plottingData, startingTime, endingTime]);
   return (
     <>
-      <TimeInput
-        startingTime={startingTime}
-        setStartingTime={setStartingTime}
-      />
-      <TimeInput endingTime={endingTime} setEndingTime={setEndingTime} />
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          gap: 2,
+          width: "95%",
+          marginLeft: 10,
+          marginRight: 10,
+        }}
+      >
+        <Typography variant="h6" gutterBottom>
+          Starting time:
+        </Typography>
+        <TimeInput time={startingTime} setTime={setStartingTime} />
+        <Typography variant="h6" gutterBottom>
+          Ending time:
+        </Typography>
+        <TimeInput time={endingTime} setTime={setEndingTime} />
+      </Box>
       <div
         id="graphdiv"
         style={{

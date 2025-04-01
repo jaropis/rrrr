@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import { Box, Typography, TextField, Button, Paper } from "@mui/material";
+import { Box, TextField, Button } from "@mui/material";
 
-const TimeInput = ({ startingTime, setStartingTime }) => {
+const TimeInput = ({ time, setTime, title }) => {
   // local state to hold input value before submitting
-  const [inputTime, setInputTime] = useState("13:15:13");
+  const [inputTime, setInputTime] = useState("00:00:00");
 
   // handling time input change
   const handleTimeChange = (e) => {
@@ -13,31 +13,26 @@ const TimeInput = ({ startingTime, setStartingTime }) => {
   // applying the time when button is clicked
   const applyStartTime = () => {
     if (inputTime) {
-      setStartingTime(inputTime);
+      setTime(inputTime);
     }
   };
 
   return (
-    <Paper sx={{ p: 2, mb: 2 }}>
-      <Typography variant="h6" gutterBottom>
-        Set Starting Time
-      </Typography>
-      <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-        <TextField
-          id="startTimeInput"
-          label="Starting Time"
-          type="time"
-          InputLabelProps={{ shrink: true }}
-          inputProps={{ step: 1 }}
-          value={inputTime}
-          onChange={handleTimeChange}
-          size="small"
-        />
-        <Button variant="contained" color="primary" onClick={applyStartTime}>
-          Apply Starting Time
-        </Button>
-      </Box>
-    </Paper>
+    <Box sx={{ display: "flex", alignItems: "center", gap: 2, width: "210px" }}>
+      <TextField
+        label={title}
+        type="time"
+        InputLabelProps={{ shrink: true }}
+        inputProps={{ step: 1 }}
+        value={inputTime}
+        onChange={handleTimeChange}
+        size="small"
+        fullWidth
+      />
+      <Button variant="contained" color="primary" onClick={applyStartTime}>
+        Apply
+      </Button>
+    </Box>
   );
 };
 
