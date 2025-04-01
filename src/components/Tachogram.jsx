@@ -9,7 +9,7 @@ const parseDiff = (data, selectedColumn, scaleDataBy) => {
       (parseFloat(data[i + 1][selectedColumn]) -
         parseFloat(data[i][selectedColumn])) *
       scaleDataBy;
-    localPlottingData.push([data[i + 1], value]);
+    localPlottingData.push([data[i + 1][selectedColumn], value]);
   }
   return localPlottingData;
 };
