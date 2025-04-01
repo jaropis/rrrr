@@ -1,6 +1,23 @@
 import React, { useState, useEffect, useRef } from "react";
 import Dygraph from "dygraphs";
 import Button from "@mui/material/Button";
+import TimeInput from "./TimeInput";
+
+function createDateFromTimeString(timeString) {
+  // parsing the time string (HH:MM:SS)
+  const [hours, minutes, seconds] = timeString.split(":").map(Number);
+
+  // creating a new date object for today
+  const date = new Date();
+
+  // setting the time components
+  date.setHours(hours || 0);
+  date.setMinutes(minutes || 0);
+  date.setSeconds(seconds || 0);
+  date.setMilliseconds(0); // resetting milliseconds for precision
+
+  return date;
+}
 
 const parseDiff = (data, selectedColumn, scaleDataBy) => {
   const localPlottingData = [];
@@ -68,6 +85,8 @@ const Tachogram = ({ selectedColumn, data, filename, diff, scaleDataBy }) => {
 
   const [plottingData, setPlottingData] = useState(null);
   const [minmax, setMinmax] = useState([]);
+  const [startingTime, setStartingTime] = useState("00:00:00");
+  const [endingTime, setEndingTime] = useState(null);
   const tachoGraph = useRef();
   useEffect(() => {
     if (data && selectedColumn >= 0) {
@@ -81,14 +100,16 @@ const Tachogram = ({ selectedColumn, data, filename, diff, scaleDataBy }) => {
 
   useEffect(() => {
     if (plottingData && plottingData.length > 0) {
-      console.log(plottingData);
       const processedData = plottingData.map((point) => {
-        // creating a new date and adding the seconds
-        const date = new Date(0);
-        date.setSeconds(point[0]);
+        const startingAt = createDateFromTimeString(startingTime);
+        const millisecondsToAdd = point[0] * 1000;
+        const newTimestamp = startingAt.getTime() + millisecondsToAdd;
+        const date = new Date(newTimestamp);
         return [date, point[1]];
       });
-      // console.log("processedData", processedData);
+      const endWindowTime = endingTime
+        ? createDateFromTimeString(endingTime)
+        : endingTime;
       tachoGraph.current = new Dygraph(
         document.getElementById("graphdiv"),
         processedData,
@@ -126,9 +147,14 @@ const Tachogram = ({ selectedColumn, data, filename, diff, scaleDataBy }) => {
         tachoGraph.current = null;
       }
     };
-  }, [plottingData]);
+  }, [plottingData, startingTime]);
   return (
     <>
+      <TimeInput
+        startingTime={startingTime}
+        setStartingTime={setStartingTime}
+      />
+      <TimeInput endingTime={endingTime} setEndingTime={setEndingTime} />
       <div
         id="graphdiv"
         style={{
