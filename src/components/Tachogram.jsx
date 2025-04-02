@@ -4,6 +4,27 @@ import Button from "@mui/material/Button";
 import TimeInput from "./TimeInput";
 import { Box, Typography } from "@mui/material";
 
+function formatTimeDifference(milliseconds) {
+  // convert to seconds
+  const totalSeconds = Math.floor(milliseconds / 1000);
+
+  // calculate hours, minutes, seconds
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+
+  // format based on duration
+  if (hours > 0) {
+    // show hours, minutes, seconds
+    return `${hours}h ${minutes}m ${seconds}s`;
+  } else if (minutes > 0) {
+    // show only minutes, seconds
+    return `${minutes}m ${seconds}s`;
+  } else {
+    // show only seconds
+    return `${seconds}s`;
+  }
+}
 function createDateFromTimeString(timeString) {
   // parsing the time string (HH:MM:SS)
   const [hours, minutes, seconds] = timeString.split(":").map(Number);
@@ -184,6 +205,9 @@ const Tachogram = ({ selectedColumn, data, filename, diff, scaleDataBy }) => {
           Window end time:
         </Typography>
         <TimeInput time={windowEndingTime} setTime={setWindowEndingTime} />
+        <Typography variant="h6" gutterBottom>
+          {formatTimeDifference(minmax[1] - minmax[0])}
+        </Typography>
       </Box>
       <div
         id="graphdiv"
