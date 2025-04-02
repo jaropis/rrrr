@@ -112,7 +112,7 @@ const Tachogram = ({ selectedColumn, data, filename, diff, scaleDataBy }) => {
   const [startingTime, setStartingTime] = useState("00:00:00");
   const [windowStartingTime, setWindowStartingTime] = useState("00:00:00");
   const [windowEndingTime, setWindowEndingTime] = useState(null);
-  const [lastChanged, setLastChanged] = useState("minmax"); // Nowy stan do śledzenia ostatnio zmienionych wartości
+  const [lastChanged, setLastChanged] = useState("minmax");
   const tachoGraph = useRef();
 
   // handling window change functions
@@ -240,7 +240,18 @@ const Tachogram = ({ selectedColumn, data, filename, diff, scaleDataBy }) => {
           Window end time:
         </Typography>
         <TimeInput time={windowEndingTime} setTime={handleWindowEndChange} />
-        <Typography variant="h6" gutterBottom>
+        <Typography
+          variant="h6"
+          sx={{
+            backgroundColor: "rgba(178, 34, 34, 0.1)",
+            padding: "4px 18px",
+            borderRadius: "4px",
+            display: "flex",
+            alignItems: "center",
+            height: "100%",
+            margin: "0",
+          }}
+        >
           {getTimeDifference()}
         </Typography>
       </Box>
