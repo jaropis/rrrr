@@ -4,7 +4,9 @@ Software for differentiating time series (making RRs from Rs, hence the name), s
 
 This is pure javascript and works on the user's computer - no data is sent to the web.
 
-# How to Install, Use, and Uninstall Our Web App
+the software is available at [https://rrrr.opengranary.com/](https://rrrr.opengranary.com/)
+
+# How to Install, Use, and Uninstall Our Web App Locally
 
 Our web application can be installed on your device for easier access and a more app-like experience without using the browser address bar.
 
