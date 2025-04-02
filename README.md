@@ -8,7 +8,7 @@ the software is available at [https://rrrr.opengranary.com/](https://rrrr.opengr
 
 # How to Install, Use, and Uninstall Our Web App Locally
 
-Our web application can be installed on your device for easier access and a more app-like experience without using the browser address bar.
+In addition to using the online version, our web application can be installed on your device for safety, easier access and a more app-like experience without using the browser address bar.
 
 ## Installation
 

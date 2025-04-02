@@ -25,6 +25,7 @@ function formatTimeDifference(milliseconds) {
     return `${seconds}s`;
   }
 }
+
 function createDateFromTimeString(timeString) {
   // parsing the time string (HH:MM:SS)
   const [hours, minutes, seconds] = timeString.split(":").map(Number);
@@ -67,6 +68,7 @@ const parseNoDiff = (data, selectedColumn, scaleDataBy) => {
 const Tachogram = ({ selectedColumn, data, filename, diff, scaleDataBy }) => {
   const logRange = (min, max, label) => {
     setMinmax([min, max]);
+    setLastChanged("minmax"); // info that the last change was minmax
   };
   const handleCut = (e) => {
     e.preventDefault();
@@ -110,7 +112,20 @@ const Tachogram = ({ selectedColumn, data, filename, diff, scaleDataBy }) => {
   const [startingTime, setStartingTime] = useState("00:00:00");
   const [windowStartingTime, setWindowStartingTime] = useState("00:00:00");
   const [windowEndingTime, setWindowEndingTime] = useState(null);
+  const [lastChanged, setLastChanged] = useState("minmax"); // Nowy stan do śledzenia ostatnio zmienionych wartości
   const tachoGraph = useRef();
+
+  // handling window change functions
+  const handleWindowStartChange = (time) => {
+    setWindowStartingTime(time);
+    setLastChanged("window"); // last change was window
+  };
+
+  const handleWindowEndChange = (time) => {
+    setWindowEndingTime(time);
+    setLastChanged("window"); // last change was window
+  };
+
   useEffect(() => {
     if (data && selectedColumn >= 0) {
       if (diff) {
@@ -181,6 +196,23 @@ const Tachogram = ({ selectedColumn, data, filename, diff, scaleDataBy }) => {
       }
     };
   }, [plottingData, startingTime, windowEndingTime, windowStartingTime]);
+
+  // Oblicz wyświetlaną różnicę czasu w zależności od tego, co ostatnio zmienialiśmy
+  const getTimeDifference = () => {
+    if (lastChanged === "minmax" && minmax.length === 2) {
+      return formatTimeDifference(minmax[1] - minmax[0]);
+    } else if (
+      lastChanged === "window" &&
+      windowEndingTime &&
+      windowStartingTime
+    ) {
+      const startTime = createDateFromTimeString(windowStartingTime);
+      const endTime = createDateFromTimeString(windowEndingTime);
+      return formatTimeDifference(endTime - startTime);
+    }
+    return "0s"; // Domyślna wartość
+  };
+
   return (
     <>
       <Box
@@ -200,13 +232,16 @@ const Tachogram = ({ selectedColumn, data, filename, diff, scaleDataBy }) => {
         <Typography variant="h6" gutterBottom>
           Window start time:
         </Typography>
-        <TimeInput time={windowStartingTime} setTime={setWindowStartingTime} />
+        <TimeInput
+          time={windowStartingTime}
+          setTime={handleWindowStartChange}
+        />
         <Typography variant="h6" gutterBottom>
           Window end time:
         </Typography>
-        <TimeInput time={windowEndingTime} setTime={setWindowEndingTime} />
+        <TimeInput time={windowEndingTime} setTime={handleWindowEndChange} />
         <Typography variant="h6" gutterBottom>
-          {formatTimeDifference(minmax[1] - minmax[0])}
+          {getTimeDifference()}
         </Typography>
       </Box>
       <div
