@@ -128,7 +128,6 @@ const Tachogram = ({ selectedColumn, data, filename, diff, scaleDataBy }) => {
     );
     let cutData = data.slice(startIndex, endIndex);
     let cutPlottingData = plottingData.slice(startIndex, endIndex);
-    console.log("startIndex, endIndex", startIndex, endIndex);
     let header = data[0];
     if (diff) {
       header.push("RR");
@@ -199,7 +198,6 @@ const Tachogram = ({ selectedColumn, data, filename, diff, scaleDataBy }) => {
         const date = new Date(newTimestamp);
         return [date, point[1]];
       });
-      console.log(processedData);
       const graphOptions = {
         title: "",
         legend: "always",
@@ -219,9 +217,22 @@ const Tachogram = ({ selectedColumn, data, filename, diff, scaleDataBy }) => {
           },
         },
         showRangeSelector: true,
-        zoomCallback: function (minDate, maxDate, yRanges) {
-          console.log("minDate, maxDate", minDate, maxDate);
-          logRange(minDate, maxDate, "Zoom Callback");
+
+        // callback for zooming with sliders or panning the whole window
+        drawCallback: function (dygraph, isInitial) {
+          if (!isInitial) {
+            // Pobierz aktualny widoczny zakres
+            const range = dygraph.xAxisRange();
+            const minDate = range[0];
+            const maxDate = range[1];
+
+            // Zaktualizuj stan minmax
+            logRange(minDate, maxDate, "Draw Callback");
+            console.log("Draw: minDate, maxDate", minDate, maxDate);
+          }
+        },
+        clickCallback: function (e, x, points) {
+          console.log("Click: x, points", x, points);
         },
         rangeSelectorHeight: 150,
       };
