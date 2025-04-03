@@ -4,6 +4,33 @@ import Button from "@mui/material/Button";
 import TimeInput from "./TimeInput";
 import { Box, Typography } from "@mui/material";
 
+function sliceResultingData(
+  data,
+  plottingData,
+  minmax,
+  windowStartingTime,
+  windowEndingTime,
+  lastChanged,
+) {
+  let startIndex = null;
+  let endIndex = null;
+  if (lastChanged === "minmax") {
+    console.log(plottingData);
+    console.log("minmax[0]", minmax[0]);
+    startIndex = plottingData.findIndex((point) => point[0] >= minmax[0]);
+    endIndex = plottingData.findIndex((point) => point[0] >= minmax[1]);
+  }
+  if (lastChanged === "window") {
+    const startTime = createDateFromTimeString(windowStartingTime);
+    const endTime = createDateFromTimeString(windowEndingTime);
+    startIndex = plottingData.findIndex(
+      (point) => point[0] >= startTime.getTime(),
+    );
+    endIndex = plottingData.findIndex((point) => point[0] >= endTime.getTime());
+  }
+  return { startIndex, endIndex };
+}
+
 function formatTimeDifference(milliseconds) {
   // convert to seconds
   const totalSeconds = Math.floor(milliseconds / 1000);
@@ -72,9 +99,17 @@ const Tachogram = ({ selectedColumn, data, filename, diff, scaleDataBy }) => {
   };
   const handleCut = (e) => {
     e.preventDefault();
-    let cutData = data.slice(minmax[0], minmax[1]);
-    let cutPlottingData = plottingData.slice(minmax[0], minmax[1]);
-    console.log(plottingData);
+    const { startIndex, endIndex } = sliceResultingData(
+      data,
+      plottingData,
+      minmax,
+      windowStartingTime,
+      windowEndingTime,
+      lastChanged,
+    );
+    let cutData = data.slice(startIndex, endIndex);
+    let cutPlottingData = plottingData.slice(startIndex, endIndex);
+    console.log("startIndex, endIndex", startIndex, endIndex);
     let header = data[0];
     if (diff) {
       header.push("RR");
@@ -197,7 +232,7 @@ const Tachogram = ({ selectedColumn, data, filename, diff, scaleDataBy }) => {
     };
   }, [plottingData, startingTime, windowEndingTime, windowStartingTime]);
 
-  // Oblicz wyświetlaną różnicę czasu w zależności od tego, co ostatnio zmienialiśmy
+  // display the time difference based on what was done recently
   const getTimeDifference = () => {
     if (lastChanged === "minmax" && minmax.length === 2) {
       return formatTimeDifference(minmax[1] - minmax[0]);
@@ -210,7 +245,7 @@ const Tachogram = ({ selectedColumn, data, filename, diff, scaleDataBy }) => {
       const endTime = createDateFromTimeString(windowEndingTime);
       return formatTimeDifference(endTime - startTime);
     }
-    return "0s"; // Domyślna wartość
+    return "0s"; // default
   };
 
   return (
