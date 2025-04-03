@@ -4,8 +4,28 @@ import Button from "@mui/material/Button";
 import TimeInput from "./TimeInput";
 import { Box, Typography } from "@mui/material";
 
+const timestampToDataIndex = (timestamp, startingTime, plottingData) => {
+  const startTime = createDateFromTimeString(startingTime).getTime();
+  const relativeTime = timestamp - startTime;
+
+  const timeInSeconds = relativeTime / 1000;
+
+  let closestIdx = 0;
+  let minDiff = Number.MAX_VALUE;
+
+  for (let i = 0; i < plottingData.length; i++) {
+    const diff = Math.abs(plottingData[i][0] - timeInSeconds);
+    if (diff < minDiff) {
+      minDiff = diff;
+      closestIdx = i;
+    }
+  }
+
+  return closestIdx + 1;
+};
 function sliceResultingData(
   data,
+  startingTime,
   plottingData,
   minmax,
   windowStartingTime,
@@ -15,10 +35,8 @@ function sliceResultingData(
   let startIndex = null;
   let endIndex = null;
   if (lastChanged === "minmax") {
-    console.log(plottingData);
-    console.log("minmax[0]", minmax[0]);
-    startIndex = plottingData.findIndex((point) => point[0] >= minmax[0]);
-    endIndex = plottingData.findIndex((point) => point[0] >= minmax[1]);
+    startIndex = timestampToDataIndex(minmax[0], startingTime, plottingData);
+    endIndex = timestampToDataIndex(minmax[1], startingTime, plottingData);
   }
   if (lastChanged === "window") {
     const startTime = createDateFromTimeString(windowStartingTime);
@@ -101,6 +119,7 @@ const Tachogram = ({ selectedColumn, data, filename, diff, scaleDataBy }) => {
     e.preventDefault();
     const { startIndex, endIndex } = sliceResultingData(
       data,
+      startingTime,
       plottingData,
       minmax,
       windowStartingTime,
@@ -180,7 +199,7 @@ const Tachogram = ({ selectedColumn, data, filename, diff, scaleDataBy }) => {
         const date = new Date(newTimestamp);
         return [date, point[1]];
       });
-
+      console.log(processedData);
       const graphOptions = {
         title: "",
         legend: "always",
@@ -201,6 +220,7 @@ const Tachogram = ({ selectedColumn, data, filename, diff, scaleDataBy }) => {
         },
         showRangeSelector: true,
         zoomCallback: function (minDate, maxDate, yRanges) {
+          console.log("minDate, maxDate", minDate, maxDate);
           logRange(minDate, maxDate, "Zoom Callback");
         },
         rangeSelectorHeight: 150,
