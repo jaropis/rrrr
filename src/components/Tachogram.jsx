@@ -46,6 +46,10 @@ function sliceResultingData(
     );
     endIndex = plottingData.findIndex((point) => point[0] >= endTime.getTime());
   }
+  if (startIndex === endIndex) {
+    endIndex = data.length - 2;
+  }
+  console.log("startIndex", startIndex, "endIndex", endIndex);
   return { startIndex, endIndex };
 }
 
@@ -126,10 +130,11 @@ const Tachogram = ({ selectedColumn, data, filename, diff, scaleDataBy }) => {
       windowEndingTime,
       lastChanged,
     );
-    let cutData = data.slice(startIndex, endIndex);
+    let cutData = [...data.slice(startIndex, endIndex)];
     let cutPlottingData = plottingData.slice(startIndex, endIndex);
     let header = data[0];
     if (diff) {
+      console.log("pushing header");
       header.push("RR");
 
       for (let idx = 0; idx < cutData.length; idx++) {
@@ -228,7 +233,6 @@ const Tachogram = ({ selectedColumn, data, filename, diff, scaleDataBy }) => {
 
             // Zaktualizuj stan minmax
             logRange(minDate, maxDate, "Draw Callback");
-            console.log("Draw: minDate, maxDate", minDate, maxDate);
           }
         },
         clickCallback: function (e, x, points) {
