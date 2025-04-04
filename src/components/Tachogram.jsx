@@ -130,13 +130,12 @@ const Tachogram = ({ selectedColumn, data, filename, diff, scaleDataBy }) => {
       windowEndingTime,
       lastChanged,
     );
-    let cutData = [...data.slice(startIndex, endIndex)];
+    //deep copy of a part of the data
+    let cutData = data.slice(startIndex, endIndex).map((row) => [...row]);
     let cutPlottingData = plottingData.slice(startIndex, endIndex);
-    let header = data[0];
+    let header = [...data[0]];
     if (diff) {
-      console.log("pushing header");
       header.push("RR");
-
       for (let idx = 0; idx < cutData.length; idx++) {
         cutData[idx].push(cutPlottingData[idx][1].toFixed(3));
       }
@@ -147,7 +146,6 @@ const Tachogram = ({ selectedColumn, data, filename, diff, scaleDataBy }) => {
     }
 
     cutData.splice(0, 0, header);
-
     const csvContent = cutData.map((row) => row.join("\t")).join("\n");
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
@@ -231,13 +229,13 @@ const Tachogram = ({ selectedColumn, data, filename, diff, scaleDataBy }) => {
             const minDate = range[0];
             const maxDate = range[1];
 
-            // Zaktualizuj stan minmax
+            // update the minmax satate
             logRange(minDate, maxDate, "Draw Callback");
           }
         },
-        clickCallback: function (e, x, points) {
-          console.log("Click: x, points", x, points);
-        },
+        // clickCallback: function (e, x, points) {
+        //   console.log("Click: x, points", x, points);
+        // },
         rangeSelectorHeight: 150,
       };
 
