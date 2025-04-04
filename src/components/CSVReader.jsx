@@ -152,7 +152,6 @@ const CSVReader = ({
   const toggleTableExpansion = () => {
     setIsTableExpanded(!isTableExpanded);
   };
-
   // defining columns for DataGrid
   const columns = headers.map((header) => ({
     field: header,
@@ -171,8 +170,8 @@ const CSVReader = ({
               fullData,
             );
             if (columnIsValid) {
-              setIsTableExpanded(false);
               setSelectedColumn(header);
+              setIsTableExpanded(true);
             } else {
               setIsTableExpanded(true);
               setSelectedColumn(null);

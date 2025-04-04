@@ -96,44 +96,13 @@ function createDateFromTimeString(timeString) {
   return date;
 }
 
-const parseDiff = (data, selectedColumn, scaleDataBy) => {
-  const localPlottingData = [];
-  for (let i = 1; i < data.length - 1; i++) {
-    const value =
-      (parseFloat(data[i + 1][selectedColumn]) -
-        parseFloat(data[i][selectedColumn])) *
-      scaleDataBy;
-    localPlottingData.push([data[i + 1][selectedColumn], value]);
-  }
-  return localPlottingData;
-};
-
-const parseNoDiff = (data, selectedColumn, scaleDataBy) => {
-  const localPlottingData = [];
-  let cumulativeTime = 0;
-  for (let i = 1; i < data.length; i++) {
-    const value = parseFloat(data[i][selectedColumn]) * scaleDataBy;
-    cumulativeTime = cumulativeTime + data[i][selectedColumn];
-    localPlottingData.push([cumulativeTime, value]);
-  }
-  return localPlottingData;
-};
-
-const Tachogram = ({ selectedColumn, data, filename, diff, scaleDataBy }) => {
+const Tachogram = ({ data, plottingData, selectedColumn, filename, diff }) => {
   const logRange = (min, max, label) => {
     setMinmax([min, max]);
     setLastChanged("minmax"); // info that the last change was minmax
   };
   const handleCut = (e) => {
     e.preventDefault();
-    console.log(
-      "startingTime",
-      startingTime,
-      "windowStartingTime",
-      windowStartingTime,
-      "windowEndingTime",
-      windowEndingTime,
-    );
     const { startIndex, endIndex } = sliceResultingData(
       data,
       startingTime,
@@ -143,7 +112,6 @@ const Tachogram = ({ selectedColumn, data, filename, diff, scaleDataBy }) => {
       windowEndingTime,
       lastChanged,
     );
-    console.log("startIndex, endIndex", startIndex, endIndex);
     //deep copy of a part of the data
     let cutData = data.slice(startIndex, endIndex).map((row) => [...row]);
     let cutPlottingData = plottingData.slice(startIndex, endIndex);
@@ -177,7 +145,6 @@ const Tachogram = ({ selectedColumn, data, filename, diff, scaleDataBy }) => {
     URL.revokeObjectURL(url);
   };
 
-  const [plottingData, setPlottingData] = useState(null);
   const [minmax, setMinmax] = useState([]);
   const [startingTime, setStartingTime] = useState("00:00:00");
   const [windowStartingTime, setWindowStartingTime] = useState("00:00:00");
@@ -187,23 +154,12 @@ const Tachogram = ({ selectedColumn, data, filename, diff, scaleDataBy }) => {
   const [tempWindowEndingTime, setTempWindowEndingTime] = useState("00:00:00");
   const [lastChanged, setLastChanged] = useState("minmax");
   const tachoGraph = useRef();
-
   // handling window change functions
   const handleWindowChange = (time) => {
     setWindowStartingTime(tempWindowStartingTime);
     setWindowEndingTime(tempWindowEndingTime);
     setLastChanged("window"); // last change was window
   };
-
-  useEffect(() => {
-    if (data && selectedColumn >= 0) {
-      if (diff) {
-        setPlottingData(parseDiff(data, selectedColumn, scaleDataBy));
-      } else {
-        setPlottingData(parseNoDiff(data, selectedColumn), scaleDataBy);
-      }
-    }
-  }, [data, selectedColumn, diff, scaleDataBy]);
 
   useEffect(() => {
     if (plottingData && plottingData.length > 0) {
