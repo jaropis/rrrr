@@ -39,12 +39,18 @@ function sliceResultingData(
     endIndex = timestampToDataIndex(minmax[1], startingTime, plottingData);
   }
   if (lastChanged === "window") {
+    const overallStartingTime = createDateFromTimeString(startingTime);
     const startTime = createDateFromTimeString(windowStartingTime);
     const endTime = createDateFromTimeString(windowEndingTime);
-    startIndex = plottingData.findIndex(
-      (point) => point[0] >= startTime.getTime(),
+    startIndex = plottingData.findIndex((point) => {
+      return (
+        point[0] * 1000 + overallStartingTime.getTime() >= startTime.getTime()
+      );
+    });
+    endIndex = plottingData.findIndex(
+      (point) =>
+        point[0] * 1000 + overallStartingTime.getTime() >= endTime.getTime(),
     );
-    endIndex = plottingData.findIndex((point) => point[0] >= endTime.getTime());
   }
   if (startIndex === endIndex) {
     endIndex = data.length - 2;
@@ -120,6 +126,14 @@ const Tachogram = ({ selectedColumn, data, filename, diff, scaleDataBy }) => {
   };
   const handleCut = (e) => {
     e.preventDefault();
+    console.log(
+      "startingTime",
+      startingTime,
+      "windowStartingTime",
+      windowStartingTime,
+      "windowEndingTime",
+      windowEndingTime,
+    );
     const { startIndex, endIndex } = sliceResultingData(
       data,
       startingTime,
@@ -129,6 +143,7 @@ const Tachogram = ({ selectedColumn, data, filename, diff, scaleDataBy }) => {
       windowEndingTime,
       lastChanged,
     );
+    console.log("startIndex, endIndex", startIndex, endIndex);
     //deep copy of a part of the data
     let cutData = data.slice(startIndex, endIndex).map((row) => [...row]);
     let cutPlottingData = plottingData.slice(startIndex, endIndex);
@@ -167,7 +182,7 @@ const Tachogram = ({ selectedColumn, data, filename, diff, scaleDataBy }) => {
   const [startingTime, setStartingTime] = useState("00:00:00");
   const [windowStartingTime, setWindowStartingTime] = useState("00:00:00");
   const [windowEndingTime, setWindowEndingTime] = useState("00:00:00");
-  const [tempWidnowStartingTime, setTempWindowStartingTime] =
+  const [tempWindowStartingTime, setTempWindowStartingTime] =
     useState("00:00:00");
   const [tempWindowEndingTime, setTempWindowEndingTime] = useState("00:00:00");
   const [lastChanged, setLastChanged] = useState("minmax");
@@ -175,7 +190,7 @@ const Tachogram = ({ selectedColumn, data, filename, diff, scaleDataBy }) => {
 
   // handling window change functions
   const handleWindowChange = (time) => {
-    setWindowStartingTime(tempWidnowStartingTime);
+    setWindowStartingTime(tempWindowStartingTime);
     setWindowEndingTime(tempWindowEndingTime);
     setLastChanged("window"); // last change was window
   };
@@ -297,14 +312,14 @@ const Tachogram = ({ selectedColumn, data, filename, diff, scaleDataBy }) => {
         </Typography>
         <TimeInput time={startingTime} setTime={setStartingTime} />
         <Typography variant="h6" gutterBottom>
-          Window start time:
+          Window start:
         </Typography>
         <TimeInput
-          time={tempWidnowStartingTime}
+          time={tempWindowStartingTime}
           setTime={setTempWindowStartingTime}
         />
         <Typography variant="h6" gutterBottom>
-          Window end time:
+          Window end:
         </Typography>
         <TimeInput
           time={tempWindowEndingTime}
