@@ -167,17 +167,16 @@ const Tachogram = ({ selectedColumn, data, filename, diff, scaleDataBy }) => {
   const [minmax, setMinmax] = useState([]);
   const [startingTime, setStartingTime] = useState("00:00:00");
   const [windowStartingTime, setWindowStartingTime] = useState("00:00:00");
-  const [windowEndingTime, setWindowEndingTime] = useState(null);
+  const [windowEndingTime, setWindowEndingTime] = useState("00:00:00");
+  const [tempWidnowStartingTime, setTempWindowStartingTime] =
+    useState("00:00:00");
+  const [tempWindowEndingTime, setTempWindowEndingTime] = useState("00:00:00");
   const [lastChanged, setLastChanged] = useState("minmax");
   const tachoGraph = useRef();
 
   // handling window change functions
-  const handleWindowStartChange = (time) => {
+  const handleWindowChange = (time) => {
     setWindowStartingTime(time);
-    setLastChanged("window"); // last change was window
-  };
-
-  const handleWindowEndChange = (time) => {
     setWindowEndingTime(time);
     setLastChanged("window"); // last change was window
   };
@@ -301,13 +300,23 @@ const Tachogram = ({ selectedColumn, data, filename, diff, scaleDataBy }) => {
           Window start time:
         </Typography>
         <TimeInput
-          time={windowStartingTime}
-          setTime={handleWindowStartChange}
+          time={tempWidnowStartingTime}
+          setTime={setTempWindowStartingTime}
         />
         <Typography variant="h6" gutterBottom>
           Window end time:
         </Typography>
-        <TimeInput time={windowEndingTime} setTime={handleWindowEndChange} />
+        <TimeInput
+          time={tempWindowEndingTime}
+          setTime={setTempWindowEndingTime}
+        />
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleWindowChange}
+        >
+          Apply
+        </Button>
         <Typography
           variant="h6"
           sx={{
