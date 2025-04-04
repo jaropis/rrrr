@@ -19,11 +19,14 @@ const parseDiff = (data, selectedColumn, scaleDataBy) => {
 const parseNoDiff = (data, selectedColumn, scaleDataBy) => {
   const localPlottingData = [];
   let cumulativeTime = 0;
+  console.log("scaleDataBy", scaleDataBy);
   for (let i = 1; i < data.length; i++) {
     const value = parseFloat(data[i][selectedColumn]) * scaleDataBy;
-    cumulativeTime = cumulativeTime + data[i][selectedColumn];
+    // console.log("parsefloat", parseFloat(data[i][selectedColumn]));
+    cumulativeTime = cumulativeTime + value;
     localPlottingData.push([cumulativeTime, value]);
   }
+  // console.log("localPlottingData", localPlottingData);
   return localPlottingData;
 };
 
@@ -42,7 +45,7 @@ function App() {
       if (diff) {
         setPlottingData(parseDiff(fullData, selectedColumnNo, scaleDataBy));
       } else {
-        setPlottingData(parseNoDiff(fullData, selectedColumnNo), scaleDataBy);
+        setPlottingData(parseNoDiff(fullData, selectedColumnNo, scaleDataBy));
       }
     }
   }, [fullData, selectedColumnNo, diff, scaleDataBy]);
