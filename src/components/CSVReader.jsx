@@ -37,6 +37,7 @@ const CSVReader = ({
   setDiff,
   scaleDataBy,
   setScaleDataBy,
+  generatePlot,
 }) => {
   const [data, setData] = useState([]);
   const [headers, setHeaders] = useState([]);
@@ -148,6 +149,16 @@ const CSVReader = ({
     setSelectedColumnNo(selectedColumnNumber);
   }, [headers, selectedColumn, setSelectedColumnNo]);
 
+  useEffect(() => {
+    if (generatePlot) {
+      console.log("collapsing the table");
+      setIsTableExpanded(false);
+    } else {
+      console.log("expanding the table");
+      setIsTableExpanded(true);
+    }
+  }, [generatePlot]);
+
   // toggling table expansion
   const toggleTableExpansion = () => {
     setIsTableExpanded(!isTableExpanded);
@@ -171,7 +182,6 @@ const CSVReader = ({
             );
             if (columnIsValid) {
               setSelectedColumn(header);
-              setIsTableExpanded(true);
             } else {
               setIsTableExpanded(true);
               setSelectedColumn(null);

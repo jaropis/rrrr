@@ -78,6 +78,7 @@ function App() {
         setDiff={setDiff}
         scaleDataBy={scaleDataBy}
         setScaleDataBy={setScaleDataBy}
+        generatePlot={generatePlot}
       />
       {generatePlot && selectedColumnNo >= 0 && (
         <Tachogram
