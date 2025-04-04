@@ -49,7 +49,6 @@ function sliceResultingData(
   if (startIndex === endIndex) {
     endIndex = data.length - 2;
   }
-  console.log("startIndex", startIndex, "endIndex", endIndex);
   return { startIndex, endIndex };
 }
 
@@ -176,8 +175,8 @@ const Tachogram = ({ selectedColumn, data, filename, diff, scaleDataBy }) => {
 
   // handling window change functions
   const handleWindowChange = (time) => {
-    setWindowStartingTime(time);
-    setWindowEndingTime(time);
+    setWindowStartingTime(tempWidnowStartingTime);
+    setWindowEndingTime(tempWindowEndingTime);
     setLastChanged("window"); // last change was window
   };
 
@@ -194,6 +193,7 @@ const Tachogram = ({ selectedColumn, data, filename, diff, scaleDataBy }) => {
   useEffect(() => {
     if (plottingData && plottingData.length > 0) {
       const processedData = plottingData.map((point) => {
+        // Convert the starting time to a Date object
         const startingAt = createDateFromTimeString(startingTime);
         const millisecondsToAdd = point[0] * 1000;
         const newTimestamp = startingAt.getTime() + millisecondsToAdd;
