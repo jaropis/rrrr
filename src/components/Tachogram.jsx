@@ -193,15 +193,12 @@ const Tachogram = ({ data, plottingData, selectedColumn, filename, diff }) => {
 
         // callback for zooming with sliders or panning the whole window
         drawCallback: function (dygraph, isInitial) {
-          if (!isInitial) {
-            // Pobierz aktualny widoczny zakres
-            const range = dygraph.xAxisRange();
-            const minDate = range[0];
-            const maxDate = range[1];
+          const range = dygraph.xAxisRange();
+          const minDate = range[0];
+          const maxDate = range[1];
 
-            // update the minmax satate
-            logRange(minDate, maxDate, "Draw Callback");
-          }
+          // update the minmax satate
+          logRange(minDate, maxDate, "Draw Callback");
         },
         // clickCallback: function (e, x, points) {
         //   console.log("Click: x, points", x, points);

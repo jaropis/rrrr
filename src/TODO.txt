@@ -1,0 +1,2 @@
+1) The window does not work again
+2) In the case of RRs from the rea files, the window lengths and time positions are incorrect. The timetrack needs to be calculated from cumulative RRs divided by 1000 (because we decided to work in miliseconds)
