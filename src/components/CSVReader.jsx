@@ -172,10 +172,8 @@ const CSVReader = ({
 
   useEffect(() => {
     if (generatePlot) {
-      console.log("collapsing the table");
       setIsTableExpanded(false);
     } else {
-      console.log("expanding the table");
       setIsTableExpanded(true);
     }
   }, [generatePlot]);

@@ -8,7 +8,6 @@ const parseDiff = (data, selectedColumn, scaleDataBy, headerPresent) => {
   let cumulativeTime = 0;
   const localPlottingData = [];
   const loopStart = headerPresent ? 1 : 0;
-  console.log("headerPresent", headerPresent);
   for (let i = loopStart; i < data.length - 1; i++) {
     const value =
       (parseFloat(data[i + 1][selectedColumn]) -
@@ -29,7 +28,6 @@ const parseNoDiff = (data, selectedColumn, scaleDataBy, headerPresent) => {
     cumulativeTime = cumulativeTime + value;
     localPlottingData.push([cumulativeTime / 1000, value]); // we want the timetrack in seconds
   }
-  // console.log("localPlottingData", localPlottingData);
   return localPlottingData;
 };
 
