@@ -4,6 +4,34 @@ import Button from "@mui/material/Button";
 import TimeInput from "./TimeInput";
 import { Box, Typography } from "@mui/material";
 
+function printDateFromTimestamp(timestamp) {
+  // creating a date from the milliseconds timestamp
+  const date = new Date(timestamp);
+
+  // extracting date components
+  const year = date.getFullYear();
+  const month = date.getMonth() + 1; // getMonth() returns 0-11
+  const day = date.getDate();
+  const hours = date.getHours();
+  const minutes = date.getMinutes();
+  const seconds = date.getSeconds();
+
+  // formatting components to ensure 2 digits where appropriate
+  const formattedMonth = month.toString().padStart(2, "0");
+  const formattedDay = day.toString().padStart(2, "0");
+  const formattedHours = hours.toString().padStart(2, "0");
+  const formattedMinutes = minutes.toString().padStart(2, "0");
+  const formattedSeconds = seconds.toString().padStart(2, "0");
+
+  // creating a formatted date string
+  const formattedDate = `${year}-${formattedMonth}-${formattedDay} ${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
+
+  // printing the result
+  console.log(`Timestamp ${timestamp} converts to: ${formattedDate}`);
+}
+
+// Example usage
+// printDateFromTimestamp(1743894000000);
 const timestampToDataIndex = (timestamp, startingTime, plottingData) => {
   const startTime = createDateFromTimeString(startingTime).getTime();
   const relativeTime = timestamp - startTime;
@@ -35,10 +63,12 @@ function sliceResultingData(
   let startIndex = null;
   let endIndex = null;
   if (lastChanged === "minmax") {
+    console.log("it was minmax");
     startIndex = timestampToDataIndex(minmax[0], startingTime, plottingData);
     endIndex = timestampToDataIndex(minmax[1], startingTime, plottingData);
   }
   if (lastChanged === "window") {
+    console.log("it was window");
     const overallStartingTime = createDateFromTimeString(startingTime);
     const startTime = createDateFromTimeString(windowStartingTime);
     const endTime = createDateFromTimeString(windowEndingTime);
