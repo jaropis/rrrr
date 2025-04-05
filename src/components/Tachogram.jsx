@@ -272,22 +272,21 @@ const Tachogram = ({ data, plottingData, selectedColumn, filename, diff }) => {
             startTime.getTime(),
             endTimeDate.getTime(),
           ];
+        } else {
+          const conditionFromTodayToTomorrow = // this happens when the beginning of the window is today and the end is tomorrow
+            windowEndingTimeDateTomorrow > startingTimeDate &&
+            windowEndingTimeDateTomorrow > windowStartingTimeDate &&
+            isDayApart(windowStartingTimeDate, windowEndingTimeDateTomorrow) &&
+            windowStartingTime !== windowEndingTime;
+          if (conditionFromTodayToTomorrow) {
+            const startTime = windowStartingTimeDate;
+            const endTimeDate = windowEndingTimeDateTomorrow; // assuming endTime is in minutes
+            graphOptions.dateWindow = [
+              startTime.getTime(),
+              endTimeDate.getTime(),
+            ];
+          }
         }
-        //else {
-        //   const conditionFromTodayToTomorrow = // this happens when the beginning of the window is today and the end is tomorrow
-        //     windowEndingTimeDateTomorrow > startingTimeDate &&
-        //     windowEndingTimeDateTomorrow > windowStartingTimeDate &&
-        //     isDayApart(windowStartingTimeDate, windowEndingTimeDateTomorrow) &&
-        //     windowStartingTime !== windowEndingTime;
-        //   if (conditionFromTodayToTomorrow) {
-        //     const startTime = windowStartingTimeDate;
-        //     const endTimeDate = windowEndingTimeDateTomorrow; // assuming endTime is in minutes
-        //     graphOptions.dateWindow = [
-        //       startTime.getTime(),
-        //       endTimeDate.getTime(),
-        //     ];
-        //   }
-        // }
 
         // creating the graph with the possibly modified options
         tachoGraph.current = new Dygraph(
