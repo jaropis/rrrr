@@ -23,7 +23,6 @@ const timestampToDataIndex = (timestamp, startingTime, plottingData) => {
 
   return closestIdx;
 };
-
 function sliceResultingData(
   data,
   startingTime,
@@ -36,13 +35,10 @@ function sliceResultingData(
   let startIndex = null;
   let endIndex = null;
   if (lastChanged === "minmax") {
-    console.log("minmax", minmax);
     startIndex = timestampToDataIndex(minmax[0], startingTime, plottingData);
-    console.log("startIndex", startIndex);
     endIndex = timestampToDataIndex(minmax[1], startingTime, plottingData);
   }
   if (lastChanged === "window") {
-    console.log("window", windowStartingTime, windowEndingTime);
     const overallStartingTime = createDateFromTimeString(startingTime);
     const startTime = createDateFromTimeString(windowStartingTime);
     const endTime = createDateFromTimeString(windowEndingTime);
@@ -117,7 +113,6 @@ const Tachogram = ({ data, plottingData, selectedColumn, filename, diff }) => {
       lastChanged,
     );
     //deep copy of a part of the data
-    console.log("startIndex, endIndex", startIndex, endIndex);
     let cutData = data.slice(startIndex, endIndex).map((row) => [...row]);
     let cutPlottingData = plottingData.slice(startIndex, endIndex);
     let header = [...data[0]];
