@@ -198,12 +198,14 @@ const Tachogram = ({ data, plottingData, selectedColumn, filename, diff }) => {
     useState("00:00:00");
   const [tempWindowEndingTime, setTempWindowEndingTime] = useState("00:00:00");
   const [lastChanged, setLastChanged] = useState("minmax");
+  const [forceRedraw, setForceRedraw] = useState(0);
   const tachoGraph = useRef();
   // handling window change functions
   const handleWindowChange = (time) => {
     setWindowStartingTime(tempWindowStartingTime);
     setWindowEndingTime(tempWindowEndingTime);
     setLastChanged("window"); // last change was window
+    setForceRedraw((prev) => prev + 1); // force redraw
   };
 
   useEffect(() => {
@@ -216,7 +218,7 @@ const Tachogram = ({ data, plottingData, selectedColumn, filename, diff }) => {
         const date = new Date(newTimestamp);
         return [date, point[1]];
       });
-
+      console.log("updating dygraph");
       const graphOptions = {
         title: "",
         legend: "always",
@@ -302,7 +304,13 @@ const Tachogram = ({ data, plottingData, selectedColumn, filename, diff }) => {
         tachoGraph.current = null;
       }
     };
-  }, [plottingData, startingTime, windowEndingTime, windowStartingTime]);
+  }, [
+    plottingData,
+    startingTime,
+    windowEndingTime,
+    windowStartingTime,
+    forceRedraw,
+  ]);
 
   // display the time difference based on what was done recently
   const getTimeDifference = () => {
