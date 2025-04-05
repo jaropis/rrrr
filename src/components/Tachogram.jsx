@@ -4,30 +4,19 @@ import Button from "@mui/material/Button";
 import TimeInput from "./TimeInput";
 import { Box, Typography } from "@mui/material";
 
-function printDateFromTimestamp(timestamp) {
-  // creating a date from the milliseconds timestamp
-  const date = new Date(timestamp);
+function isDayApart(date1, date2) {
+  console.log("inside isDayApart, date1:", date1, "date2:", date2);
+  console.log("dupa");
+  console.log("inside isDayApart", date1.getFullYear(), date2.getFullYear());
+  // creating new date objects with just the date components (no time)
+  const day1 = new Date(date1.getFullYear(), date1.getMonth(), date1.getDate());
+  const day2 = new Date(date2.getFullYear(), date2.getMonth(), date2.getDate());
 
-  // extracting date components
-  const year = date.getFullYear();
-  const month = date.getMonth() + 1; // getMonth() returns 0-11
-  const day = date.getDate();
-  const hours = date.getHours();
-  const minutes = date.getMinutes();
-  const seconds = date.getSeconds();
+  // calculating difference in milliseconds
+  const diffMs = Math.abs(day2 - day1);
 
-  // formatting components to ensure 2 digits where appropriate
-  const formattedMonth = month.toString().padStart(2, "0");
-  const formattedDay = day.toString().padStart(2, "0");
-  const formattedHours = hours.toString().padStart(2, "0");
-  const formattedMinutes = minutes.toString().padStart(2, "0");
-  const formattedSeconds = seconds.toString().padStart(2, "0");
-
-  // creating a formatted date string
-  const formattedDate = `${year}-${formattedMonth}-${formattedDay} ${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
-
-  // printing the result
-  console.log(`Timestamp ${timestamp} converts to: ${formattedDate}`);
+  // one day in milliseconds = 24 * 60 * 60 * 1000 = 86400000
+  return diffMs === 86400000;
 }
 
 // Example usage
@@ -288,22 +277,35 @@ const Tachogram = ({ data, plottingData, selectedColumn, filename, diff }) => {
             startTime.getTime(),
             endTimeDate.getTime(),
           ];
+        } else {
+          const conditionFromTodayToTomorrow = // this happens when the beginning of the window is today and the end is tomorrow
+            windowEndingTimeDateTomorrow > startingTimeDate &&
+            windowEndingTimeDateTomorrow > windowStartingTimeDate &&
+            isDayApart(windowStartingTime, windowEndingTimeDateTomorrow);
+          if (conditionFromTodayToTomorrow) {
+            const startTime = windowStartingTimeDate;
+            const endTimeDate = windowEndingTimeDateTomorrow; // assuming endTime is in minutes
+            graphOptions.dateWindow = [
+              startTime.getTime(),
+              endTimeDate.getTime(),
+            ];
+          }
         }
-      }
 
-      // creating the graph with the possibly modified options
-      tachoGraph.current = new Dygraph(
-        document.getElementById("graphdiv"),
-        processedData,
-        graphOptions,
-      );
-    }
-    return () => {
-      if (tachoGraph.current) {
-        tachoGraph.current.destroy();
-        tachoGraph.current = null;
+        // creating the graph with the possibly modified options
+        tachoGraph.current = new Dygraph(
+          document.getElementById("graphdiv"),
+          processedData,
+          graphOptions,
+        );
       }
-    };
+      return () => {
+        if (tachoGraph.current) {
+          tachoGraph.current.destroy();
+          tachoGraph.current = null;
+        }
+      };
+    }
   }, [
     plottingData,
     startingTime,
