@@ -5,13 +5,15 @@ import CSVReader from "./components/CSVReader";
 import Tachogram from "./components/Tachogram";
 
 const parseDiff = (data, selectedColumn, scaleDataBy) => {
+  let cumulativeTime = 0;
   const localPlottingData = [];
   for (let i = 1; i < data.length - 1; i++) {
     const value =
       (parseFloat(data[i + 1][selectedColumn]) -
         parseFloat(data[i][selectedColumn])) *
       scaleDataBy;
-    localPlottingData.push([data[i + 1][selectedColumn], value]);
+    cumulativeTime = cumulativeTime + value;
+    localPlottingData.push([cumulativeTime / 1000, value]); // we want the timetrack in seconds
   }
   return localPlottingData;
 };
@@ -19,12 +21,11 @@ const parseDiff = (data, selectedColumn, scaleDataBy) => {
 const parseNoDiff = (data, selectedColumn, scaleDataBy) => {
   const localPlottingData = [];
   let cumulativeTime = 0;
-  console.log("scaleDataBy", scaleDataBy);
+
   for (let i = 1; i < data.length; i++) {
     const value = parseFloat(data[i][selectedColumn]) * scaleDataBy;
-    // console.log("parsefloat", parseFloat(data[i][selectedColumn]));
     cumulativeTime = cumulativeTime + value;
-    localPlottingData.push([cumulativeTime, value]);
+    localPlottingData.push([cumulativeTime / 1000, value]); // we want the timetrack in seconds
   }
   // console.log("localPlottingData", localPlottingData);
   return localPlottingData;
