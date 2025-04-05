@@ -29,7 +29,6 @@ const getHeaderAndData = (parsedLines) => {
   } else {
     parsedData = parsedLines.slice(1);
   }
-  console.log("parsedHeaders", parsedHeaders);
   return { parsedHeaders, parsedData };
 };
 const isColumnValid = (selectedColumn, fullData) => {
