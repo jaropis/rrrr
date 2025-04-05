@@ -202,7 +202,7 @@ const Tachogram = ({ data, plottingData, selectedColumn, filename, diff }) => {
         const date = new Date(newTimestamp);
         return [date, point[1]];
       });
-      console.log("processing data", processedData);
+      //console.log("processing data", processedData);
       const graphOptions = {
         title: "",
         legend: "always",
@@ -225,6 +225,7 @@ const Tachogram = ({ data, plottingData, selectedColumn, filename, diff }) => {
 
         // callback for zooming with sliders or panning the whole window
         drawCallback: function (dygraph, isInitial) {
+          console.log("drawCallback");
           const range = dygraph.xAxisRange();
           const minDate = range[0];
           const maxDate = range[1];
@@ -249,9 +250,20 @@ const Tachogram = ({ data, plottingData, selectedColumn, filename, diff }) => {
         windowEndingTimeDate > windowStartingTimeDate;
 
       if (conditionToday) {
+        console.log("condition today");
         const startTime = createDateFromTimeString(windowStartingTime);
         const endTimeDate = createDateFromTimeString(windowEndingTime); // assuming endTime is in minutes
+        console.log("startTime", startTime, "endTimeDate", endTimeDate);
+        console.log(
+          "startTime",
+          startTime.getTime(),
+          "endTimeDate",
+          endTimeDate.getTime(),
+          "difference",
+          (endTimeDate.getTime() - startTime.getTime()) / 1000 / 60,
+        );
         graphOptions.dateWindow = [startTime.getTime(), endTimeDate.getTime()];
+        console.log("graphOptions.dateWindow", graphOptions.dateWindow);
       } else {
         // conditionally add dateWindow property - checking if the condition is met TOMORROW
         const windowEndingTimeDateTomorrow = createDateFromTimeString(
@@ -266,12 +278,14 @@ const Tachogram = ({ data, plottingData, selectedColumn, filename, diff }) => {
           windowEndingTimeDateTomorrow > startingTimeDate &&
           windowEndingTimeDateTomorrow > windowStartingTimeDateTomorrow;
         if (conditiontomorrow) {
+          console.log("condition tomorrow");
           const startTime = createDateFromTimeString(windowStartingTime, true);
           const endTimeDate = createDateFromTimeString(windowEndingTime, true); // assuming endTime is in minutes
           graphOptions.dateWindow = [
             startTime.getTime(),
             endTimeDate.getTime(),
           ];
+          console.log("graphOptions.dateWindow", graphOptions.dateWindow);
         } else {
           const conditionFromTodayToTomorrow = // this happens when the beginning of the window is today and the end is tomorrow
             windowEndingTimeDateTomorrow > startingTimeDate &&
@@ -279,12 +293,15 @@ const Tachogram = ({ data, plottingData, selectedColumn, filename, diff }) => {
             isDayApart(windowStartingTimeDate, windowEndingTimeDateTomorrow) &&
             windowStartingTime !== windowEndingTime;
           if (conditionFromTodayToTomorrow) {
+            console.log("condition from today to tomorrow");
             const startTime = windowStartingTimeDate;
             const endTimeDate = windowEndingTimeDateTomorrow; // assuming endTime is in minutes
             graphOptions.dateWindow = [
               startTime.getTime(),
               endTimeDate.getTime(),
             ];
+          } else {
+            console.log("fallthrough");
           }
         }
 
