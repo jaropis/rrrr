@@ -5,9 +5,6 @@ import TimeInput from "./TimeInput";
 import { Box, Typography } from "@mui/material";
 
 function isDayApart(date1, date2) {
-  console.log("inside isDayApart, date1:", date1, "date2:", date2);
-  console.log("dupa");
-  console.log("inside isDayApart", date1.getFullYear(), date2.getFullYear());
   // creating new date objects with just the date components (no time)
   const day1 = new Date(date1.getFullYear(), date1.getMonth(), date1.getDate());
   const day2 = new Date(date2.getFullYear(), date2.getMonth(), date2.getDate());
@@ -52,12 +49,10 @@ function sliceResultingData(
   let startIndex = null;
   let endIndex = null;
   if (lastChanged === "minmax") {
-    console.log("it was minmax");
     startIndex = timestampToDataIndex(minmax[0], startingTime, plottingData);
     endIndex = timestampToDataIndex(minmax[1], startingTime, plottingData);
   }
   if (lastChanged === "window") {
-    console.log("it was window");
     const overallStartingTime = createDateFromTimeString(startingTime);
     const startTime = createDateFromTimeString(windowStartingTime);
     const endTime = createDateFromTimeString(windowEndingTime);
@@ -207,7 +202,7 @@ const Tachogram = ({ data, plottingData, selectedColumn, filename, diff }) => {
         const date = new Date(newTimestamp);
         return [date, point[1]];
       });
-      console.log("updating dygraph");
+      console.log("processing data", processedData);
       const graphOptions = {
         title: "",
         legend: "always",
@@ -277,20 +272,22 @@ const Tachogram = ({ data, plottingData, selectedColumn, filename, diff }) => {
             startTime.getTime(),
             endTimeDate.getTime(),
           ];
-        } else {
-          const conditionFromTodayToTomorrow = // this happens when the beginning of the window is today and the end is tomorrow
-            windowEndingTimeDateTomorrow > startingTimeDate &&
-            windowEndingTimeDateTomorrow > windowStartingTimeDate &&
-            isDayApart(windowStartingTime, windowEndingTimeDateTomorrow);
-          if (conditionFromTodayToTomorrow) {
-            const startTime = windowStartingTimeDate;
-            const endTimeDate = windowEndingTimeDateTomorrow; // assuming endTime is in minutes
-            graphOptions.dateWindow = [
-              startTime.getTime(),
-              endTimeDate.getTime(),
-            ];
-          }
         }
+        //else {
+        //   const conditionFromTodayToTomorrow = // this happens when the beginning of the window is today and the end is tomorrow
+        //     windowEndingTimeDateTomorrow > startingTimeDate &&
+        //     windowEndingTimeDateTomorrow > windowStartingTimeDate &&
+        //     isDayApart(windowStartingTimeDate, windowEndingTimeDateTomorrow) &&
+        //     windowStartingTime !== windowEndingTime;
+        //   if (conditionFromTodayToTomorrow) {
+        //     const startTime = windowStartingTimeDate;
+        //     const endTimeDate = windowEndingTimeDateTomorrow; // assuming endTime is in minutes
+        //     graphOptions.dateWindow = [
+        //       startTime.getTime(),
+        //       endTimeDate.getTime(),
+        //     ];
+        //   }
+        // }
 
         // creating the graph with the possibly modified options
         tachoGraph.current = new Dygraph(
