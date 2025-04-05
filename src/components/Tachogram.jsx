@@ -80,7 +80,7 @@ function formatTimeDifference(milliseconds) {
   }
 }
 
-function createDateFromTimeString(timeString) {
+function createDateFromTimeString(timeString, nextDay = false) {
   // parsing the time string (HH:MM:SS)
   const [hours, minutes, seconds] = timeString.split(":").map(Number);
 
@@ -92,6 +92,11 @@ function createDateFromTimeString(timeString) {
   date.setMinutes(minutes || 0);
   date.setSeconds(seconds || 0);
   date.setMilliseconds(0); // resetting milliseconds for precision
+
+  // if nextDay is true, adding one day to the date, so that we can set the window after midnight
+  if (nextDay) {
+    date.setDate(date.getDate() + 1);
+  }
 
   return date;
 }
@@ -181,6 +186,7 @@ const Tachogram = ({ data, plottingData, selectedColumn, filename, diff }) => {
         const date = new Date(newTimestamp);
         return [date, point[1]];
       });
+
       const graphOptions = {
         title: "",
         legend: "always",
@@ -216,15 +222,41 @@ const Tachogram = ({ data, plottingData, selectedColumn, filename, diff }) => {
         rangeSelectorHeight: 150,
       };
 
-      // conditionally add dateWindow property
-      if (
+      // conditionally add dateWindow property - checking if the condition is met TODAY
+      const windowEndingTimeDate = createDateFromTimeString(windowEndingTime);
+      const windowStartingTimeDate =
+        createDateFromTimeString(windowStartingTime);
+      const startingTimeDate = createDateFromTimeString(startingTime);
+      const conditionToday =
         windowEndingTime !== null &&
-        windowEndingTime > startingTime &&
-        windowEndingTime > windowStartingTime
-      ) {
+        windowEndingTimeDate > startingTimeDate &&
+        windowEndingTimeDate > windowStartingTimeDate;
+
+      if (conditionToday) {
         const startTime = createDateFromTimeString(windowStartingTime);
         const endTimeDate = createDateFromTimeString(windowEndingTime); // assuming endTime is in minutes
         graphOptions.dateWindow = [startTime.getTime(), endTimeDate.getTime()];
+      } else {
+        // conditionally add dateWindow property - checking if the condition is met TOMORROW
+        const windowEndingTimeDateTomorrow = createDateFromTimeString(
+          windowEndingTime,
+          true,
+        );
+        const windowStartingTimeDateTomorrow = createDateFromTimeString(
+          windowStartingTime,
+          true,
+        );
+        const conditiontomorrow =
+          windowEndingTimeDateTomorrow > startingTimeDate &&
+          windowEndingTimeDateTomorrow > windowStartingTimeDateTomorrow;
+        if (conditiontomorrow) {
+          const startTime = createDateFromTimeString(windowStartingTime, true);
+          const endTimeDate = createDateFromTimeString(windowEndingTime, true); // assuming endTime is in minutes
+          graphOptions.dateWindow = [
+            startTime.getTime(),
+            endTimeDate.getTime(),
+          ];
+        }
       }
 
       // creating the graph with the possibly modified options
@@ -332,3 +364,7 @@ const Tachogram = ({ data, plottingData, selectedColumn, filename, diff }) => {
 };
 
 export default Tachogram;
+// ||
+//         (windowEndingTime !== null &&
+//           windowEndingTime > startingTime &&
+//           windowEndingTime > windowStartingTime)
