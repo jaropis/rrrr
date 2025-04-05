@@ -15,6 +15,23 @@ import {
   FormControlLabel,
 } from "@mui/material";
 
+const getHeaderAndData = (parsedLines) => {
+  let parsedHeaders = parsedLines[0];
+  let parsedData;
+  // checking if all headers can be cast to numbers
+  const allHeadersAreNumbers = parsedHeaders.every((header) => {
+    const parsedHeader = parseFloat(header);
+    return !isNaN(parsedHeader) && isFinite(parseFloat(parsedHeader));
+  });
+  if (allHeadersAreNumbers) {
+    parsedHeaders = parsedHeaders.map((header, index) => `Column ${index + 1}`);
+    parsedData = parsedLines;
+  } else {
+    parsedData = parsedLines.slice(1);
+  }
+  console.log("parsedHeaders", parsedHeaders);
+  return { parsedHeaders, parsedData };
+};
 const isColumnValid = (selectedColumn, fullData) => {
   let columnIsValid = false;
   // checking the first
@@ -90,9 +107,8 @@ const CSVReader = ({
               .split(new RegExp(getSeparatorValue(separator)))
               .filter((part) => part.trim().length > 0),
           );
+          const { parsedHeaders, parsedData } = getHeaderAndData(parsedLines);
 
-          const parsedHeaders = parsedLines[0];
-          const parsedData = parsedLines.slice(1);
           setFullData(parsedLines);
           setHeaders(parsedHeaders);
 
