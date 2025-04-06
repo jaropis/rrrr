@@ -140,7 +140,15 @@ const CSVReader = ({
 
       reader.readAsText(file);
     },
-    [separator, setFullData, setHeaders, setData, setError, rowsToShow],
+    [
+      separator,
+      setFullData,
+      setHeaders,
+      setData,
+      setError,
+      rowsToShow,
+      setHeaderPresent,
+    ],
   );
 
   const handleFileUpload = (event) => {

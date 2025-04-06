@@ -258,7 +258,6 @@ const Tachogram = ({ data, plottingData, selectedColumn, filename, diff }) => {
         windowEndingTimeDate > windowStartingTimeDate;
 
       if (conditionToday) {
-        console.log("today");
         const startTime = createDateFromTimeString(windowStartingTime);
         const endTimeDate = createDateFromTimeString(windowEndingTime); // assuming endTime is in minutes
         graphOptions.dateWindow = [startTime.getTime(), endTimeDate.getTime()];
@@ -276,7 +275,6 @@ const Tachogram = ({ data, plottingData, selectedColumn, filename, diff }) => {
           windowEndingTimeDateTomorrow > startingTimeDate &&
           windowEndingTimeDateTomorrow > windowStartingTimeDateTomorrow;
         if (conditiontomorrow) {
-          console.log("tomorrow");
           const startTime = createDateFromTimeString(windowStartingTime, true);
           const endTimeDate = createDateFromTimeString(windowEndingTime, true); // assuming endTime is in minutes
           graphOptions.dateWindow = [
@@ -291,7 +289,6 @@ const Tachogram = ({ data, plottingData, selectedColumn, filename, diff }) => {
             isDayApart(windowStartingTimeDate, windowEndingTimeDateTomorrow) &&
             windowStartingTime !== windowEndingTime;
           if (conditionFromTodayToTomorrow) {
-            console.log("from today to tomorrow");
             const startTime = windowStartingTimeDate;
             const endTimeDate = windowEndingTimeDateTomorrow; // assuming endTime is in minutes
             graphOptions.dateWindow = [
