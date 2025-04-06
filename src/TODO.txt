@@ -1,0 +1,1 @@
+Add, redux, keep the file-type in redux store and on file-type change reset the controls
