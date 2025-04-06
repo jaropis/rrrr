@@ -56,6 +56,7 @@ const CSVReader = ({
   scaleDataBy,
   setScaleDataBy,
   generatePlot,
+  setGeneratePlot,
   setHeaderPresent,
 }) => {
   const [data, setData] = useState([]);
@@ -159,6 +160,7 @@ const CSVReader = ({
     setSelectedColumn(null);
     setIsTableExpanded(true);
     processFile(file);
+    setGeneratePlot(false);
   };
 
   useEffect(() => {

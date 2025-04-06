@@ -88,6 +88,7 @@ function App() {
         scaleDataBy={scaleDataBy}
         setScaleDataBy={setScaleDataBy}
         generatePlot={generatePlot}
+        setGeneratePlot={setGeneratePlot}
         setHeaderPresent={setHeaderPresent}
       />
       {generatePlot && selectedColumnNo >= 0 && (
