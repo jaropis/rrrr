@@ -16,17 +16,13 @@ function isDayApart(date1, date2) {
   return diffMs === 86400000;
 }
 
-// Example usage
-// printDateFromTimestamp(1743894000000);
 const timestampToDataIndex = (timestamp, startingTime, plottingData) => {
   const startTime = createDateFromTimeString(startingTime).getTime();
   const relativeTime = timestamp - startTime;
 
   const timeInSeconds = relativeTime / 1000;
-
   let closestIdx = 0;
   let minDiff = Number.MAX_VALUE;
-
   for (let i = 0; i < plottingData.length; i++) {
     const diff = Math.abs(plottingData[i][0] - timeInSeconds);
     if (diff < minDiff) {
@@ -34,9 +30,17 @@ const timestampToDataIndex = (timestamp, startingTime, plottingData) => {
       closestIdx = i;
     }
   }
-
+  const timeBetweenStartAndWindow = plottingData
+    .slice(0, closestIdx + 1)
+    .reduce((acc, point) => {
+      return acc + point[1];
+    }, 0);
+  if (timeBetweenStartAndWindow <= relativeTime) {
+    closestIdx += 1; // this is because we want the next point after the end of the segment between recording start and the beginnign of the window - so basically the first point inside the window
+  }
   return closestIdx;
 };
+
 function sliceResultingData(
   data,
   startingTime,
@@ -67,7 +71,7 @@ function sliceResultingData(
     );
   }
   if (startIndex === endIndex) {
-    endIndex = data.length - 2;
+    endIndex = data.length + 2;
   }
   return { startIndex, endIndex };
 }
@@ -131,9 +135,6 @@ const Tachogram = ({ data, plottingData, selectedColumn, filename, diff }) => {
       windowEndingTime,
       lastChanged,
     );
-    //deep copy of a part of the data
-    let cutData = data.slice(startIndex, endIndex).map((row) => [...row]);
-    let cutPlottingData = plottingData.slice(startIndex, endIndex);
     let header = [...data[0]];
     const allHeadersAreNumbers = header.every((header) => {
       const parsedHeader = parseFloat(header);
@@ -142,6 +143,14 @@ const Tachogram = ({ data, plottingData, selectedColumn, filename, diff }) => {
     if (allHeadersAreNumbers) {
       header = header.map((header, index) => `Column ${index + 1}`);
     }
+    //deep copy of a part of the data
+    const offset = Number(!allHeadersAreNumbers) + Number(diff); // if there is a header, we need to offset the data by 1, if RRs are calculated from the second R wave vs first, we need to add 1, so Number(diff)
+    let cutData = data
+      .slice(startIndex + offset, endIndex + offset + 1) // +1 because we want to include the last point - this is what the user expects
+      .map((row) => [...row]);
+
+    let cutPlottingData = plottingData.slice(startIndex, endIndex + 1); // +1 because we want to include the last point - this is what the user expects - see above
+
     if (diff) {
       header.push("RR");
       for (let idx = 0; idx < cutData.length; idx++) {
@@ -249,6 +258,7 @@ const Tachogram = ({ data, plottingData, selectedColumn, filename, diff }) => {
         windowEndingTimeDate > windowStartingTimeDate;
 
       if (conditionToday) {
+        console.log("today");
         const startTime = createDateFromTimeString(windowStartingTime);
         const endTimeDate = createDateFromTimeString(windowEndingTime); // assuming endTime is in minutes
         graphOptions.dateWindow = [startTime.getTime(), endTimeDate.getTime()];
@@ -266,6 +276,7 @@ const Tachogram = ({ data, plottingData, selectedColumn, filename, diff }) => {
           windowEndingTimeDateTomorrow > startingTimeDate &&
           windowEndingTimeDateTomorrow > windowStartingTimeDateTomorrow;
         if (conditiontomorrow) {
+          console.log("tomorrow");
           const startTime = createDateFromTimeString(windowStartingTime, true);
           const endTimeDate = createDateFromTimeString(windowEndingTime, true); // assuming endTime is in minutes
           graphOptions.dateWindow = [
@@ -274,11 +285,13 @@ const Tachogram = ({ data, plottingData, selectedColumn, filename, diff }) => {
           ];
         } else {
           const conditionFromTodayToTomorrow = // this happens when the beginning of the window is today and the end is tomorrow
+            windowStartingTimeDate > startingTimeDate &&
             windowEndingTimeDateTomorrow > startingTimeDate &&
             windowEndingTimeDateTomorrow > windowStartingTimeDate &&
             isDayApart(windowStartingTimeDate, windowEndingTimeDateTomorrow) &&
             windowStartingTime !== windowEndingTime;
           if (conditionFromTodayToTomorrow) {
+            console.log("from today to tomorrow");
             const startTime = windowStartingTimeDate;
             const endTimeDate = windowEndingTimeDateTomorrow; // assuming endTime is in minutes
             graphOptions.dateWindow = [
