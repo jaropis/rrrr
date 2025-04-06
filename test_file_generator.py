@@ -2,7 +2,7 @@ from datetime import datetime, time, timedelta
 
 start_hour = 19
 today = datetime.today().date()
-today_at_start = datetime.combine(today, time(start_hour, 0))
+today_at_start = datetime.combine(today, time(18, 59, 59))
 
 recording_length = 24 * 60 * 60  # seconds in 24 hours
 
