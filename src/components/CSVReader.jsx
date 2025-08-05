@@ -13,7 +13,18 @@ import {
   IconButton,
   Checkbox,
   FormControlLabel,
+  Card,
+  CardContent,
+  Chip,
+  Fade,
+  Alert,
 } from "@mui/material";
+import {
+  CloudUpload as CloudUploadIcon,
+  ExpandMore as ExpandMoreIcon,
+  ExpandLess as ExpandLessIcon,
+  Analytics as AnalyticsIcon,
+} from "@mui/icons-material";
 
 const getHeaderAndData = (parsedLines, setHeaderPresent) => {
   let parsedHeaders = parsedLines[0];
@@ -223,144 +234,256 @@ const CSVReader = ({
   }));
 
   return (
-    <div>
-      {/* Input controls in a single row */}
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          gap: "20px",
-          flexWrap: "wrap",
-          marginBottom: 2,
+    <Box>
+      {/* Enhanced Input controls section */}
+      <Card 
+        elevation={0} 
+        sx={{ 
+          mb: 3, 
+          background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
+          borderRadius: 3,
+          border: '1px solid rgba(148, 163, 184, 0.2)'
         }}
       >
-        <Box>
-          <input
-            type="file"
-            accept=".txt,.csv,.tsv,.dat,.rea"
-            onChange={handleFileUpload}
-            style={{ display: "none" }}
-            id="file-input"
-            ref={fileInputRef}
-          />
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => fileInputRef.current.click()}
+        <CardContent>
+          <Typography 
+            variant="h6" 
+            sx={{ 
+              mb: 3, 
+              color: '#475569',
+              fontWeight: 600,
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1
+            }}
           >
-            Select a file
-          </Button>
-        </Box>
-
-        <FormControl sx={{ minWidth: 180 }}>
-          <InputLabel id="separator-label">Separator</InputLabel>
-          <Select
-            labelId="separator-label"
-            id="separator"
-            value={separator}
-            label="Separator"
-            onChange={(e) => setSeparator(e.target.value)}
-          >
-            <MenuItem value="tab">Tab</MenuItem>
-            <MenuItem value="whitespace">Whitespace</MenuItem>
-            <MenuItem value="comma">Comma (,)</MenuItem>
-            <MenuItem value="semicolon">Semicolon (;)</MenuItem>
-          </Select>
-        </FormControl>
-
-        <TextField
-          id="customFilename"
-          label="Custom filename"
-          variant="outlined"
-          size="small"
-          value={customFilename}
-          onChange={(e) => setCustomFilename(e.target.value)}
-          placeholder="Enter a text"
-        />
-
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={diff}
-              onChange={(e) => setDiff(e.target.checked)}
-              color="primary"
-            />
-          }
-          label="Extract RRs"
-        />
-
-        <TextField
-          id="scaleDataBy"
-          label="Scale data by"
-          variant="outlined"
-          size="small"
-          type="number"
-          inputProps={{
-            step: "10",
-            min: "1",
-          }}
-          value={scaleDataBy}
-          onChange={(e) => setScaleDataBy(Number(e.target.value))}
-        />
-      </Box>
-
-      {/* error display */}
-      {error && <Typography color="error">{error}</Typography>}
-
-      {/* DataGrid display with collapsible functionality */}
-      {data.length > 0 && (
-        <div>
+            <AnalyticsIcon color="primary" />
+            Data Configuration
+          </Typography>
+          
           <Box
             sx={{
               display: "flex",
               alignItems: "center",
-              mb: 1,
-              borderBottom: "1px solid #ddd",
-              justifyContent: "space-between",
-              width: "95%",
-              marginLeft: "auto",
-              marginRight: "auto",
+              justifyContent: "center",
+              gap: 3,
+              flexWrap: "wrap",
             }}
           >
-            <Typography variant="h6">Data Preview: {filename}</Typography>
-            <IconButton onClick={toggleTableExpansion}>
-              {isTableExpanded ? "−" : "+"}
+            <Box>
+              <input
+                type="file"
+                accept=".txt,.csv,.tsv,.dat,.rea"
+                onChange={handleFileUpload}
+                style={{ display: "none" }}
+                id="file-input"
+                ref={fileInputRef}
+              />
+              <Button
+                variant="contained"
+                size="large"
+                startIcon={<CloudUploadIcon />}
+                onClick={() => fileInputRef.current.click()}
+                sx={{
+                  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                  boxShadow: '0 8px 32px rgba(102, 126, 234, 0.3)',
+                  borderRadius: 2,
+                  px: 3,
+                  py: 1.5,
+                  '&:hover': {
+                    background: 'linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%)',
+                    boxShadow: '0 12px 40px rgba(102, 126, 234, 0.4)',
+                  }
+                }}
+              >
+                Select File
+              </Button>
+            </Box>
+
+            <FormControl sx={{ minWidth: 180 }}>
+              <InputLabel id="separator-label">Separator</InputLabel>
+              <Select
+                labelId="separator-label"
+                id="separator"
+                value={separator}
+                label="Separator"
+                onChange={(e) => setSeparator(e.target.value)}
+                sx={{ borderRadius: 2 }}
+              >
+                <MenuItem value="tab">Tab</MenuItem>
+                <MenuItem value="whitespace">Whitespace</MenuItem>
+                <MenuItem value="comma">Comma (,)</MenuItem>
+                <MenuItem value="semicolon">Semicolon (;)</MenuItem>
+              </Select>
+            </FormControl>
+
+            <TextField
+              id="customFilename"
+              label="Custom filename"
+              variant="outlined"
+              size="medium"
+              value={customFilename}
+              onChange={(e) => setCustomFilename(e.target.value)}
+              placeholder="Enter prefix"
+              sx={{ 
+                '& .MuiOutlinedInput-root': { borderRadius: 2 }
+              }}
+            />
+
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={diff}
+                  onChange={(e) => setDiff(e.target.checked)}
+                  color="primary"
+                  sx={{
+                    '&.Mui-checked': {
+                      color: '#667eea'
+                    }
+                  }}
+                />
+              }
+              label={
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <Typography>Extract RRs</Typography>
+                  <Chip 
+                    label="Advanced" 
+                    size="small" 
+                    color="primary" 
+                    variant="outlined"
+                  />
+                </Box>
+              }
+            />
+
+            <TextField
+              id="scaleDataBy"
+              label="Scale data by"
+              variant="outlined"
+              size="medium"
+              type="number"
+              inputProps={{
+                step: "10",
+                min: "1",
+              }}
+              value={scaleDataBy}
+              onChange={(e) => setScaleDataBy(Number(e.target.value))}
+              sx={{ 
+                width: 150,
+                '& .MuiOutlinedInput-root': { borderRadius: 2 }
+              }}
+            />
+          </Box>
+        </CardContent>
+      </Card>
+
+      {/* Enhanced error display */}
+      {error && (
+        <Fade in={true}>
+          <Alert severity="error" sx={{ mb: 3, borderRadius: 2 }}>
+            {error}
+          </Alert>
+        </Fade>
+      )}
+
+      {/* Enhanced DataGrid display */}
+      {data.length > 0 && (
+        <Card 
+          elevation={0}
+          sx={{ 
+            borderRadius: 3,
+            border: '1px solid rgba(148, 163, 184, 0.2)',
+            overflow: 'hidden'
+          }}
+        >
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              p: 2,
+              background: 'linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%)',
+              borderBottom: '1px solid rgba(148, 163, 184, 0.2)'
+            }}
+          >
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+              <Typography variant="h6" sx={{ color: '#475569', fontWeight: 600 }}>
+                Data Preview
+              </Typography>
+              {filename && (
+                <Chip 
+                  label={filename} 
+                  color="primary" 
+                  variant="outlined" 
+                  size="small"
+                />
+              )}
+            </Box>
+            <IconButton 
+              onClick={toggleTableExpansion}
+              sx={{
+                background: 'rgba(102, 126, 234, 0.1)',
+                '&:hover': {
+                  background: 'rgba(102, 126, 234, 0.2)',
+                }
+              }}
+            >
+              {isTableExpanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
             </IconButton>
           </Box>
 
-          {isTableExpanded && (
-            <div
-              style={{
-                height: 420,
-                width: "95%",
-                marginLeft: "auto",
-                marginRight: "auto",
-              }}
-            >
-              <DataGrid
-                rows={data}
-                columns={columns}
-                pageSizeOptions={[5, 10, 25]}
-                initialState={{
-                  pagination: null,
-                }}
-                disableColumnMenu
-              />
-            </div>
-          )}
-        </div>
+          <Fade in={isTableExpanded}>
+            <Box sx={{ display: isTableExpanded ? 'block' : 'none' }}>
+              <Box sx={{ height: 420 }}>
+                <DataGrid
+                  rows={data}
+                  columns={columns}
+                  pageSizeOptions={[5, 10, 25]}
+                  initialState={{
+                    pagination: null,
+                  }}
+                  disableColumnMenu
+                  sx={{
+                    border: 'none',
+                    '& .MuiDataGrid-cell': {
+                      borderBottom: '1px solid rgba(148, 163, 184, 0.1)',
+                    },
+                    '& .MuiDataGrid-columnHeaders': {
+                      background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)',
+                      borderBottom: '2px solid rgba(148, 163, 184, 0.2)',
+                    },
+                    '& .MuiDataGrid-row:hover': {
+                      background: 'rgba(102, 126, 234, 0.05)',
+                    }
+                  }}
+                />
+              </Box>
+            </Box>
+          </Fade>
+        </Card>
       )}
 
-      {/* debug info */}
+      {/* Enhanced debug info */}
       {headers.length > 0 && (
-        <Box sx={{ marginTop: 2, fontSize: "0.8rem", color: "#666" }}>
-          <Typography variant="body2">
-            Detected columns: {headers.join(", ")}
-          </Typography>
-        </Box>
+        <Fade in={true}>
+          <Card 
+            elevation={0}
+            sx={{ 
+              mt: 2, 
+              background: 'rgba(102, 126, 234, 0.05)',
+              border: '1px solid rgba(102, 126, 234, 0.1)',
+              borderRadius: 2
+            }}
+          >
+            <CardContent sx={{ py: 1.5 }}>
+              <Typography variant="body2" sx={{ color: '#64748b' }}>
+                <strong>Detected columns:</strong> {headers.join(", ")}
+              </Typography>
+            </CardContent>
+          </Card>
+        </Fade>
       )}
-    </div>
+    </Box>
   );
 };
 
