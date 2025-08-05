@@ -345,17 +345,7 @@ const CSVReader = ({
                   }}
                 />
               }
-              label={
-                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                  <Typography>Extract RRs</Typography>
-                  <Chip
-                    label="Advanced"
-                    size="small"
-                    color="primary"
-                    variant="outlined"
-                  />
-                </Box>
-              }
+              label="Extract RRs"
             />
 
             <TextField

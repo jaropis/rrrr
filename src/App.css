@@ -172,6 +172,13 @@
   margin-top: 0 !important;
 }
 
+/* Duration display specific styling */
+.duration-display .MuiPaper-root {
+  height: auto !important;
+  min-height: 36px !important;
+  padding: 0.6rem 0.8rem !important;
+}
+
 /* Responsive adjustments for time controls */
 @media (max-width: 768px) {
   .time-controls-container {
