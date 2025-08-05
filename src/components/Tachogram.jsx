@@ -2,15 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import Dygraph from "dygraphs";
 import Button from "@mui/material/Button";
 import TimeInput from "./TimeInput";
-import {
-  Box,
-  Typography,
-  Card,
-  CardContent,
-  Chip,
-  Grid,
-  Paper,
-} from "@mui/material";
+import { Box, Typography, Card, CardContent, Chip, Paper } from "@mui/material";
 import {
   Timeline as TimelineIcon,
   GetApp as DownloadIcon,
@@ -378,91 +370,86 @@ const Tachogram = ({ data, plottingData, selectedColumn, filename, diff }) => {
             Time Configuration
           </Typography>
 
-          <Grid container spacing={3} alignItems="center">
-            <Grid item xs={12} sm={6} md={2}>
-              <Box>
-                <Typography
-                  variant="subtitle2"
-                  sx={{ mb: 1, color: "#64748b", fontWeight: 500 }}
-                >
-                  Recording Start
-                </Typography>
-                <TimeInput time={startingTime} setTime={setStartingTime} />
-              </Box>
-            </Grid>
+          <div className="time-controls-container">
+            <div className="time-input-group">
+              <Typography
+                variant="subtitle2"
+                sx={{ mb: 1, color: "#64748b", fontWeight: 500 }}
+              >
+                Recording Start
+              </Typography>
+              <TimeInput time={startingTime} setTime={setStartingTime} />
+            </div>
 
-            <Grid item xs={12} sm={6} md={2}>
-              <Box>
-                <Typography
-                  variant="subtitle2"
-                  sx={{ mb: 1, color: "#64748b", fontWeight: 500 }}
-                >
-                  Window Start
-                </Typography>
-                <TimeInput
-                  time={tempWindowStartingTime}
-                  setTime={setTempWindowStartingTime}
-                />
-              </Box>
-            </Grid>
+            <div className="time-input-group">
+              <Typography
+                variant="subtitle2"
+                sx={{ mb: 1, color: "#64748b", fontWeight: 500 }}
+              >
+                Window Start
+              </Typography>
+              <TimeInput
+                time={tempWindowStartingTime}
+                setTime={setTempWindowStartingTime}
+              />
+            </div>
 
-            <Grid item xs={12} sm={6} md={2}>
-              <Box>
-                <Typography
-                  variant="subtitle2"
-                  sx={{ mb: 1, color: "#64748b", fontWeight: 500 }}
-                >
-                  Window End
-                </Typography>
-                <TimeInput
-                  time={tempWindowEndingTime}
-                  setTime={setTempWindowEndingTime}
-                />
-              </Box>
-            </Grid>
+            <div className="time-input-group">
+              <Typography
+                variant="subtitle2"
+                sx={{ mb: 1, color: "#64748b", fontWeight: 500 }}
+              >
+                Window End
+              </Typography>
+              <TimeInput
+                time={tempWindowEndingTime}
+                setTime={setTempWindowEndingTime}
+              />
+            </div>
 
-            <Grid item xs={12} sm={6} md={2}>
+            <div className="apply-window-button">
               <Button
                 variant="contained"
                 onClick={handleWindowChange}
+                fullWidth
                 sx={{
                   background:
-                    "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-                  boxShadow: "0 4px 20px rgba(102, 126, 234, 0.3)",
+                    "linear-gradient(135deg, #64748b 0%, #475569 100%)",
+                  boxShadow: "0 4px 20px rgba(100, 116, 139, 0.3)",
                   borderRadius: 2,
-                  px: 3,
-                  py: 1.5,
-                  mt: 2,
                   "&:hover": {
                     background:
-                      "linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%)",
-                    boxShadow: "0 6px 25px rgba(102, 126, 234, 0.4)",
+                      "linear-gradient(135deg, #475569 0%, #334155 100%)",
+                    boxShadow: "0 6px 25px rgba(100, 116, 139, 0.4)",
                   },
                 }}
               >
                 Apply Window
               </Button>
-            </Grid>
+            </div>
 
-            <Grid item xs={12} sm={12} md={4}>
+            <div className="duration-display">
+              <Typography
+                variant="subtitle2"
+                sx={{ mb: 1, color: "#64748b", fontWeight: 500 }}
+              >
+                Selection Duration
+              </Typography>
               <Paper
                 elevation={0}
                 sx={{
                   background:
-                    "linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%)",
-                  border: "1px solid rgba(102, 126, 234, 0.2)",
+                    "linear-gradient(135deg, rgba(100, 116, 139, 0.1) 0%, rgba(71, 85, 105, 0.1) 100%)",
+                  border: "1px solid rgba(100, 116, 139, 0.2)",
                   borderRadius: 2,
                   p: 2,
                   textAlign: "center",
-                  mt: 2,
+                  height: 56,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
                 }}
               >
-                <Typography
-                  variant="subtitle2"
-                  sx={{ color: "#64748b", mb: 0.5 }}
-                >
-                  Selection Duration
-                </Typography>
                 <Chip
                   label={getTimeDifference()}
                   color="primary"
@@ -472,12 +459,12 @@ const Tachogram = ({ data, plottingData, selectedColumn, filename, diff }) => {
                     fontWeight: 600,
                     height: 32,
                     background:
-                      "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                      "linear-gradient(135deg, #64748b 0%, #475569 100%)",
                   }}
                 />
               </Paper>
-            </Grid>
-          </Grid>
+            </div>
+          </div>
         </CardContent>
       </Card>
 

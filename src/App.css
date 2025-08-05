@@ -137,3 +137,52 @@
 .loading {
   animation: pulse 2s infinite;
 }
+
+/* Time controls layout improvements */
+.time-controls-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: flex-end;
+  width: 100%;
+}
+
+.time-input-group {
+  flex: 1;
+  min-width: 200px;
+}
+
+.apply-window-button {
+  flex: 0 0 auto;
+  min-width: 140px;
+}
+
+.duration-display {
+  flex: 1;
+  min-width: 200px;
+}
+
+/* Ensure time inputs and button have same height */
+.time-controls-container .MuiTextField-root,
+.time-controls-container .MuiButton-root {
+  height: 56px;
+}
+
+.time-controls-container .MuiButton-root {
+  margin-top: 0 !important;
+}
+
+/* Responsive adjustments for time controls */
+@media (max-width: 768px) {
+  .time-controls-container {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .time-input-group,
+  .apply-window-button,
+  .duration-display {
+    flex: none;
+    width: 100%;
+  }
+}
