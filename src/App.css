@@ -1,7 +1,7 @@
 /* Modern gradient background */
 .App {
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #cbd5e1 100%);
   padding: 2rem 1rem;
   text-align: center;
 }
@@ -10,12 +10,13 @@
 .app-container {
   max-width: 1400px;
   margin: 0 auto;
-  background: rgba(255, 255, 255, 0.95);
+  background: rgba(255, 255, 255, 0.98);
   border-radius: 20px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
   backdrop-filter: blur(10px);
   padding: 2rem;
   min-height: calc(100vh - 4rem);
+  border: 1px solid rgba(226, 232, 240, 0.5);
 }
 
 /* Header styling */
@@ -26,7 +27,7 @@
 }
 
 .app-title {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #1e293b 0%, #475569 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -76,12 +77,12 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #64748b 0%, #475569 100%);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+  background: linear-gradient(135deg, #475569 0%, #334155 100%);
 }
 
 /* Responsive design */
@@ -89,16 +90,16 @@
   .App {
     padding: 1rem 0.5rem;
   }
-  
+
   .app-container {
     padding: 1rem;
     border-radius: 12px;
   }
-  
+
   .app-title {
     font-size: 2.5rem !important;
   }
-  
+
   .content-section,
   .chart-container {
     padding: 1rem;
@@ -124,7 +125,8 @@
 
 /* Loading states and animations */
 @keyframes pulse {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 1;
   }
   50% {

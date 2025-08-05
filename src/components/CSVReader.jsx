@@ -236,31 +236,31 @@ const CSVReader = ({
   return (
     <Box>
       {/* Enhanced Input controls section */}
-      <Card 
-        elevation={0} 
-        sx={{ 
-          mb: 3, 
-          background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
+      <Card
+        elevation={0}
+        sx={{
+          mb: 3,
+          background: "linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)",
           borderRadius: 3,
-          border: '1px solid rgba(148, 163, 184, 0.2)'
+          border: "1px solid rgba(148, 163, 184, 0.2)",
         }}
       >
         <CardContent>
-          <Typography 
-            variant="h6" 
-            sx={{ 
-              mb: 3, 
-              color: '#475569',
+          <Typography
+            variant="h6"
+            sx={{
+              mb: 3,
+              color: "#475569",
               fontWeight: 600,
-              display: 'flex',
-              alignItems: 'center',
-              gap: 1
+              display: "flex",
+              alignItems: "center",
+              gap: 1,
             }}
           >
             <AnalyticsIcon color="primary" />
             Data Configuration
           </Typography>
-          
+
           <Box
             sx={{
               display: "flex",
@@ -285,15 +285,17 @@ const CSVReader = ({
                 startIcon={<CloudUploadIcon />}
                 onClick={() => fileInputRef.current.click()}
                 sx={{
-                  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                  boxShadow: '0 8px 32px rgba(102, 126, 234, 0.3)',
+                  background:
+                    "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                  boxShadow: "0 8px 32px rgba(102, 126, 234, 0.3)",
                   borderRadius: 2,
                   px: 3,
                   py: 1.5,
-                  '&:hover': {
-                    background: 'linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%)',
-                    boxShadow: '0 12px 40px rgba(102, 126, 234, 0.4)',
-                  }
+                  "&:hover": {
+                    background:
+                      "linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%)",
+                    boxShadow: "0 12px 40px rgba(102, 126, 234, 0.4)",
+                  },
                 }}
               >
                 Select File
@@ -325,8 +327,8 @@ const CSVReader = ({
               value={customFilename}
               onChange={(e) => setCustomFilename(e.target.value)}
               placeholder="Enter prefix"
-              sx={{ 
-                '& .MuiOutlinedInput-root': { borderRadius: 2 }
+              sx={{
+                "& .MuiOutlinedInput-root": { borderRadius: 2 },
               }}
             />
 
@@ -337,19 +339,19 @@ const CSVReader = ({
                   onChange={(e) => setDiff(e.target.checked)}
                   color="primary"
                   sx={{
-                    '&.Mui-checked': {
-                      color: '#667eea'
-                    }
+                    "&.Mui-checked": {
+                      color: "#667eea",
+                    },
                   }}
                 />
               }
               label={
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                   <Typography>Extract RRs</Typography>
-                  <Chip 
-                    label="Advanced" 
-                    size="small" 
-                    color="primary" 
+                  <Chip
+                    label="Advanced"
+                    size="small"
+                    color="primary"
                     variant="outlined"
                   />
                 </Box>
@@ -368,9 +370,9 @@ const CSVReader = ({
               }}
               value={scaleDataBy}
               onChange={(e) => setScaleDataBy(Number(e.target.value))}
-              sx={{ 
+              sx={{
                 width: 150,
-                '& .MuiOutlinedInput-root': { borderRadius: 2 }
+                "& .MuiOutlinedInput-root": { borderRadius: 2 },
               }}
             />
           </Box>
@@ -388,12 +390,12 @@ const CSVReader = ({
 
       {/* Enhanced DataGrid display */}
       {data.length > 0 && (
-        <Card 
+        <Card
           elevation={0}
-          sx={{ 
+          sx={{
             borderRadius: 3,
-            border: '1px solid rgba(148, 163, 184, 0.2)',
-            overflow: 'hidden'
+            border: "1px solid rgba(148, 163, 184, 0.2)",
+            overflow: "hidden",
           }}
         >
           <Box
@@ -402,30 +404,33 @@ const CSVReader = ({
               alignItems: "center",
               justifyContent: "space-between",
               p: 2,
-              background: 'linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%)',
-              borderBottom: '1px solid rgba(148, 163, 184, 0.2)'
+              background: "linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%)",
+              borderBottom: "1px solid rgba(148, 163, 184, 0.2)",
             }}
           >
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-              <Typography variant="h6" sx={{ color: '#475569', fontWeight: 600 }}>
+            <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+              <Typography
+                variant="h6"
+                sx={{ color: "#475569", fontWeight: 600 }}
+              >
                 Data Preview
               </Typography>
               {filename && (
-                <Chip 
-                  label={filename} 
-                  color="primary" 
-                  variant="outlined" 
+                <Chip
+                  label={filename}
+                  color="primary"
+                  variant="outlined"
                   size="small"
                 />
               )}
             </Box>
-            <IconButton 
+            <IconButton
               onClick={toggleTableExpansion}
               sx={{
-                background: 'rgba(102, 126, 234, 0.1)',
-                '&:hover': {
-                  background: 'rgba(102, 126, 234, 0.2)',
-                }
+                background: "rgba(102, 126, 234, 0.1)",
+                "&:hover": {
+                  background: "rgba(102, 126, 234, 0.2)",
+                },
               }}
             >
               {isTableExpanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
@@ -433,7 +438,7 @@ const CSVReader = ({
           </Box>
 
           <Fade in={isTableExpanded}>
-            <Box sx={{ display: isTableExpanded ? 'block' : 'none' }}>
+            <Box sx={{ display: isTableExpanded ? "block" : "none" }}>
               <Box sx={{ height: 420 }}>
                 <DataGrid
                   rows={data}
@@ -444,17 +449,18 @@ const CSVReader = ({
                   }}
                   disableColumnMenu
                   sx={{
-                    border: 'none',
-                    '& .MuiDataGrid-cell': {
-                      borderBottom: '1px solid rgba(148, 163, 184, 0.1)',
+                    border: "none",
+                    "& .MuiDataGrid-cell": {
+                      borderBottom: "1px solid rgba(148, 163, 184, 0.1)",
                     },
-                    '& .MuiDataGrid-columnHeaders': {
-                      background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)',
-                      borderBottom: '2px solid rgba(148, 163, 184, 0.2)',
+                    "& .MuiDataGrid-columnHeaders": {
+                      background:
+                        "linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)",
+                      borderBottom: "2px solid rgba(148, 163, 184, 0.2)",
                     },
-                    '& .MuiDataGrid-row:hover': {
-                      background: 'rgba(102, 126, 234, 0.05)',
-                    }
+                    "& .MuiDataGrid-row:hover": {
+                      background: "rgba(102, 126, 234, 0.05)",
+                    },
                   }}
                 />
               </Box>
@@ -466,17 +472,17 @@ const CSVReader = ({
       {/* Enhanced debug info */}
       {headers.length > 0 && (
         <Fade in={true}>
-          <Card 
+          <Card
             elevation={0}
-            sx={{ 
-              mt: 2, 
-              background: 'rgba(102, 126, 234, 0.05)',
-              border: '1px solid rgba(102, 126, 234, 0.1)',
-              borderRadius: 2
+            sx={{
+              mt: 2,
+              background: "rgba(102, 126, 234, 0.05)",
+              border: "1px solid rgba(102, 126, 234, 0.1)",
+              borderRadius: 2,
             }}
           >
             <CardContent sx={{ py: 1.5 }}>
-              <Typography variant="body2" sx={{ color: '#64748b' }}>
+              <Typography variant="body2" sx={{ color: "#64748b" }}>
                 <strong>Detected columns:</strong> {headers.join(", ")}
               </Typography>
             </CardContent>

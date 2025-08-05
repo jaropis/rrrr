@@ -2,19 +2,19 @@ import React, { useState, useEffect, useRef } from "react";
 import Dygraph from "dygraphs";
 import Button from "@mui/material/Button";
 import TimeInput from "./TimeInput";
-import { 
-  Box, 
-  Typography, 
-  Card, 
-  CardContent, 
-  Chip, 
-  Grid, 
-  Paper
+import {
+  Box,
+  Typography,
+  Card,
+  CardContent,
+  Chip,
+  Grid,
+  Paper,
 } from "@mui/material";
 import {
   Timeline as TimelineIcon,
   GetApp as DownloadIcon,
-  AccessTime as ClockIcon
+  AccessTime as ClockIcon,
 } from "@mui/icons-material";
 
 function isDayApart(date1, date2) {
@@ -353,44 +353,50 @@ const Tachogram = ({ data, plottingData, selectedColumn, filename, diff }) => {
   return (
     <Box>
       {/* Enhanced Time Controls */}
-      <Card 
-        elevation={0} 
-        sx={{ 
-          mb: 3, 
-          background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
+      <Card
+        elevation={0}
+        sx={{
+          mb: 3,
+          background: "linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)",
           borderRadius: 3,
-          border: '1px solid rgba(148, 163, 184, 0.2)'
+          border: "1px solid rgba(148, 163, 184, 0.2)",
         }}
       >
         <CardContent>
-          <Typography 
-            variant="h6" 
-            sx={{ 
-              mb: 3, 
-              color: '#475569',
+          <Typography
+            variant="h6"
+            sx={{
+              mb: 3,
+              color: "#475569",
               fontWeight: 600,
-              display: 'flex',
-              alignItems: 'center',
-              gap: 1
+              display: "flex",
+              alignItems: "center",
+              gap: 1,
             }}
           >
             <ClockIcon color="primary" />
             Time Configuration
           </Typography>
-          
+
           <Grid container spacing={3} alignItems="center">
             <Grid item xs={12} sm={6} md={2}>
               <Box>
-                <Typography variant="subtitle2" sx={{ mb: 1, color: '#64748b', fontWeight: 500 }}>
+                <Typography
+                  variant="subtitle2"
+                  sx={{ mb: 1, color: "#64748b", fontWeight: 500 }}
+                >
                   Recording Start
                 </Typography>
                 <TimeInput time={startingTime} setTime={setStartingTime} />
               </Box>
             </Grid>
-            
+
             <Grid item xs={12} sm={6} md={2}>
               <Box>
-                <Typography variant="subtitle2" sx={{ mb: 1, color: '#64748b', fontWeight: 500 }}>
+                <Typography
+                  variant="subtitle2"
+                  sx={{ mb: 1, color: "#64748b", fontWeight: 500 }}
+                >
                   Window Start
                 </Typography>
                 <TimeInput
@@ -399,10 +405,13 @@ const Tachogram = ({ data, plottingData, selectedColumn, filename, diff }) => {
                 />
               </Box>
             </Grid>
-            
+
             <Grid item xs={12} sm={6} md={2}>
               <Box>
-                <Typography variant="subtitle2" sx={{ mb: 1, color: '#64748b', fontWeight: 500 }}>
+                <Typography
+                  variant="subtitle2"
+                  sx={{ mb: 1, color: "#64748b", fontWeight: 500 }}
+                >
                   Window End
                 </Typography>
                 <TimeInput
@@ -411,52 +420,59 @@ const Tachogram = ({ data, plottingData, selectedColumn, filename, diff }) => {
                 />
               </Box>
             </Grid>
-            
+
             <Grid item xs={12} sm={6} md={2}>
               <Button
                 variant="contained"
                 onClick={handleWindowChange}
                 sx={{
-                  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                  boxShadow: '0 4px 20px rgba(102, 126, 234, 0.3)',
+                  background:
+                    "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                  boxShadow: "0 4px 20px rgba(102, 126, 234, 0.3)",
                   borderRadius: 2,
                   px: 3,
                   py: 1.5,
                   mt: 2,
-                  '&:hover': {
-                    background: 'linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%)',
-                    boxShadow: '0 6px 25px rgba(102, 126, 234, 0.4)',
-                  }
+                  "&:hover": {
+                    background:
+                      "linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%)",
+                    boxShadow: "0 6px 25px rgba(102, 126, 234, 0.4)",
+                  },
                 }}
               >
                 Apply Window
               </Button>
             </Grid>
-            
+
             <Grid item xs={12} sm={12} md={4}>
-              <Paper 
+              <Paper
                 elevation={0}
                 sx={{
-                  background: 'linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%)',
-                  border: '1px solid rgba(102, 126, 234, 0.2)',
+                  background:
+                    "linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%)",
+                  border: "1px solid rgba(102, 126, 234, 0.2)",
                   borderRadius: 2,
                   p: 2,
-                  textAlign: 'center',
-                  mt: 2
+                  textAlign: "center",
+                  mt: 2,
                 }}
               >
-                <Typography variant="subtitle2" sx={{ color: '#64748b', mb: 0.5 }}>
+                <Typography
+                  variant="subtitle2"
+                  sx={{ color: "#64748b", mb: 0.5 }}
+                >
                   Selection Duration
                 </Typography>
-                <Chip 
+                <Chip
                   label={getTimeDifference()}
                   color="primary"
                   variant="filled"
                   sx={{
-                    fontSize: '1rem',
+                    fontSize: "1rem",
                     fontWeight: 600,
                     height: 32,
-                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                    background:
+                      "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
                   }}
                 />
               </Paper>
@@ -466,37 +482,37 @@ const Tachogram = ({ data, plottingData, selectedColumn, filename, diff }) => {
       </Card>
 
       {/* Enhanced Chart Container */}
-      <Card 
+      <Card
         elevation={0}
-        sx={{ 
+        sx={{
           mb: 3,
           borderRadius: 3,
-          border: '1px solid rgba(148, 163, 184, 0.2)',
-          overflow: 'hidden'
+          border: "1px solid rgba(148, 163, 184, 0.2)",
+          overflow: "hidden",
         }}
       >
         <Box
           sx={{
             p: 2,
-            background: 'linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%)',
-            borderBottom: '1px solid rgba(148, 163, 184, 0.2)'
+            background: "linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%)",
+            borderBottom: "1px solid rgba(148, 163, 184, 0.2)",
           }}
         >
-          <Typography 
-            variant="h6" 
-            sx={{ 
-              color: '#475569',
+          <Typography
+            variant="h6"
+            sx={{
+              color: "#475569",
               fontWeight: 600,
-              display: 'flex',
-              alignItems: 'center',
-              gap: 1
+              display: "flex",
+              alignItems: "center",
+              gap: 1,
             }}
           >
             <TimelineIcon color="primary" />
             Tachogram Analysis
           </Typography>
         </Box>
-        
+
         <Box sx={{ p: 2 }}>
           <div
             id="graphdiv"
@@ -504,34 +520,34 @@ const Tachogram = ({ data, plottingData, selectedColumn, filename, diff }) => {
               width: "100%",
               height: 400,
               borderRadius: 8,
-              border: '1px solid rgba(148, 163, 184, 0.1)',
-              background: 'white'
+              border: "1px solid rgba(148, 163, 184, 0.1)",
+              background: "white",
             }}
           />
         </Box>
       </Card>
 
       {/* Enhanced Export Button */}
-      <Box sx={{ textAlign: 'center' }}>
+      <Box sx={{ textAlign: "center" }}>
         <Button
           variant="contained"
           size="large"
           startIcon={<DownloadIcon />}
           onClick={handleCut}
           sx={{
-            background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-            boxShadow: '0 8px 32px rgba(16, 185, 129, 0.3)',
+            background: "linear-gradient(135deg, #10b981 0%, #059669 100%)",
+            boxShadow: "0 8px 32px rgba(16, 185, 129, 0.3)",
             borderRadius: 3,
             px: 4,
             py: 2,
-            fontSize: '1.1rem',
+            fontSize: "1.1rem",
             fontWeight: 600,
-            '&:hover': {
-              background: 'linear-gradient(135deg, #059669 0%, #047857 100%)',
-              boxShadow: '0 12px 40px rgba(16, 185, 129, 0.4)',
-              transform: 'translateY(-2px)',
+            "&:hover": {
+              background: "linear-gradient(135deg, #059669 0%, #047857 100%)",
+              boxShadow: "0 12px 40px rgba(16, 185, 129, 0.4)",
+              transform: "translateY(-2px)",
             },
-            transition: 'all 0.3s ease'
+            transition: "all 0.3s ease",
           }}
         >
           Cut and Export Data
