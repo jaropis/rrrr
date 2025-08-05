@@ -354,9 +354,11 @@ const CSVReader = ({
               variant="outlined"
               size="medium"
               type="number"
-              inputProps={{
-                step: "10",
-                min: "1",
+              slotProps={{
+                htmlInput: {
+                  step: "any",
+                  min: "0.001",
+                },
               }}
               value={scaleDataBy}
               onChange={(e) => setScaleDataBy(Number(e.target.value))}
