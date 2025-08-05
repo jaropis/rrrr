@@ -4,10 +4,16 @@ import { Typography } from "@mui/material";
 import CSVReader from "./components/CSVReader";
 import Tachogram from "./components/Tachogram";
 
-const parseDiff = (data, selectedColumn, scaleDataBy, headerPresent) => {
+const parseDiff = (
+  data,
+  selectedColumn,
+  scaleDataBy,
+  headerPresent,
+  rowsToRemove,
+) => {
   let cumulativeTime = 0;
   const localPlottingData = [];
-  const loopStart = headerPresent ? 1 : 0;
+  const loopStart = headerPresent ? 1 + rowsToRemove : rowsToRemove;
   for (let i = loopStart; i < data.length - 1; i++) {
     const value =
       (parseFloat(data[i + 1][selectedColumn]) -
@@ -19,10 +25,16 @@ const parseDiff = (data, selectedColumn, scaleDataBy, headerPresent) => {
   return localPlottingData;
 };
 
-const parseNoDiff = (data, selectedColumn, scaleDataBy, headerPresent) => {
+const parseNoDiff = (
+  data,
+  selectedColumn,
+  scaleDataBy,
+  headerPresent,
+  rowsToRemove,
+) => {
   const localPlottingData = [];
   let cumulativeTime = 0;
-  const loopStart = headerPresent ? 1 : 0;
+  const loopStart = headerPresent ? 1 + rowsToRemove : rowsToRemove;
   for (let i = loopStart; i < data.length; i++) {
     const value = parseFloat(data[i][selectedColumn]) * scaleDataBy;
     cumulativeTime = cumulativeTime + value;
@@ -41,20 +53,40 @@ function App() {
   const [generatePlot, setGeneratePlot] = useState(false);
   const [plottingData, setPlottingData] = useState(null);
   const [headerPresent, setHeaderPresent] = useState(true);
+  const [rowsToRemove, setRowsToRemove] = useState(0);
 
   useEffect(() => {
     if (fullData && selectedColumnNo >= 0) {
       if (diff) {
         setPlottingData(
-          parseDiff(fullData, selectedColumnNo, scaleDataBy, headerPresent),
+          parseDiff(
+            fullData,
+            selectedColumnNo,
+            scaleDataBy,
+            headerPresent,
+            rowsToRemove,
+          ),
         );
       } else {
         setPlottingData(
-          parseNoDiff(fullData, selectedColumnNo, scaleDataBy, headerPresent),
+          parseNoDiff(
+            fullData,
+            selectedColumnNo,
+            scaleDataBy,
+            headerPresent,
+            rowsToRemove,
+          ),
         );
       }
     }
-  }, [fullData, selectedColumnNo, diff, scaleDataBy, headerPresent]);
+  }, [
+    fullData,
+    selectedColumnNo,
+    diff,
+    scaleDataBy,
+    headerPresent,
+    rowsToRemove,
+  ]);
 
   useEffect(() => {
     if (plottingData && plottingData.length > 0) {
@@ -90,6 +122,8 @@ function App() {
         generatePlot={generatePlot}
         setGeneratePlot={setGeneratePlot}
         setHeaderPresent={setHeaderPresent}
+        rowsToRemove={rowsToRemove}
+        setRowsToRemove={setRowsToRemove}
       />
       {generatePlot && selectedColumnNo >= 0 && (
         <Tachogram

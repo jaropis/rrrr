@@ -26,8 +26,16 @@ import {
   Analytics as AnalyticsIcon,
 } from "@mui/icons-material";
 
-const getHeaderAndData = (parsedLines, setHeaderPresent) => {
-  let parsedHeaders = parsedLines[0];
+const getHeaderAndData = (parsedLines, setHeaderPresent, rowsToRemove) => {
+  // Remove specified number of rows from the beginning
+  const linesAfterRemoval = parsedLines.slice(rowsToRemove);
+
+  if (linesAfterRemoval.length === 0) {
+    setHeaderPresent(false);
+    return { parsedHeaders: [], parsedData: [] };
+  }
+
+  let parsedHeaders = linesAfterRemoval[0];
   let parsedData;
   // checking if all headers can be cast to numbers
   const allHeadersAreNumbers = parsedHeaders.every((header) => {
@@ -37,10 +45,10 @@ const getHeaderAndData = (parsedLines, setHeaderPresent) => {
   if (allHeadersAreNumbers) {
     setHeaderPresent(false);
     parsedHeaders = parsedHeaders.map((header, index) => `Column ${index + 1}`);
-    parsedData = parsedLines;
+    parsedData = linesAfterRemoval;
   } else {
     setHeaderPresent(true);
-    parsedData = parsedLines.slice(1);
+    parsedData = linesAfterRemoval.slice(1);
   }
   return { parsedHeaders, parsedData };
 };
@@ -69,6 +77,8 @@ const CSVReader = ({
   generatePlot,
   setGeneratePlot,
   setHeaderPresent,
+  rowsToRemove,
+  setRowsToRemove,
 }) => {
   const [data, setData] = useState([]);
   const [headers, setHeaders] = useState([]);
@@ -124,6 +134,7 @@ const CSVReader = ({
           const { parsedHeaders, parsedData } = getHeaderAndData(
             parsedLines,
             setHeaderPresent,
+            rowsToRemove,
           );
 
           setFullData(parsedLines);
@@ -160,6 +171,7 @@ const CSVReader = ({
       setError,
       rowsToShow,
       setHeaderPresent,
+      rowsToRemove,
     ],
   );
 
@@ -364,6 +376,28 @@ const CSVReader = ({
               onChange={(e) => setScaleDataBy(Number(e.target.value))}
               sx={{
                 width: 150,
+                "& .MuiOutlinedInput-root": { borderRadius: 2 },
+              }}
+            />
+
+            <TextField
+              id="rowsToRemove"
+              label="Remove rows from top"
+              variant="outlined"
+              size="medium"
+              type="number"
+              slotProps={{
+                htmlInput: {
+                  min: "0",
+                  step: "1",
+                },
+              }}
+              value={rowsToRemove}
+              onChange={(e) =>
+                setRowsToRemove(Math.max(0, parseInt(e.target.value) || 0))
+              }
+              sx={{
+                width: 180,
                 "& .MuiOutlinedInput-root": { borderRadius: 2 },
               }}
             />
