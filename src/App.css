@@ -107,8 +107,13 @@
   }
 }
 
-/* Animation for smooth transitions */
-* {
+/* Animation for smooth transitions - excluding interactive chart elements */
+.MuiButton-root,
+.MuiTextField-root,
+.MuiFormControl-root,
+.content-section,
+.chart-container,
+.app-container {
   transition: all 0.3s ease;
 }
 
