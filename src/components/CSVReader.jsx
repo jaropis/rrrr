@@ -62,6 +62,17 @@ const isColumnValid = (selectedColumn, fullData) => {
   }
   return columnIsValid;
 };
+
+const getAnnotations = (fullData, seelctedColumn) => {
+  const theOtherColumn = 1 - seelctedColumn;
+  const annotations = [];
+  for (let i = 0; i < fullData.length; i++) {
+    const value = fullData[i][theOtherColumn];
+    if (value && !annotations.includes(value)) {
+      annotations.push(value);
+    }
+  }
+};
 const CSVReader = ({
   fullData,
   setFullData,
@@ -194,6 +205,14 @@ const CSVReader = ({
       processFile(currentFile);
     }
   }, [separator, currentFile, processFile]);
+
+  useEffect(() => {
+    if (selectedColumn) {
+      console.log("selectedColumn", selectedColumn);
+      const annotations = getAnnotations(fullData, selectedColumn);
+      setAnnotValues(annotations);
+    }
+  }, [fullData, selectedColumn, setAnnotValues]);
 
   useEffect(() => {
     const maxHeader =
@@ -364,7 +383,7 @@ const CSVReader = ({
             />
             {diff && (
               <FormControl sx={{ minWidth: 80 }}>
-                <InputLabel id="annotation-label">Avail. annotats</InputLabel>
+                <InputLabel id="annotation-label">Sinus beat</InputLabel>
                 <Select
                   labelId="annotation-label"
                   id="annotation"
