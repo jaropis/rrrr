@@ -111,6 +111,7 @@ function App() {
       <CSVReader
         fullData={fullData}
         setFullData={setFullData}
+        selectedColumnNo={selectedColumnNo}
         setSelectedColumnNo={setSelectedColumnNo}
         filename={filename}
         setFilename={setFilename}

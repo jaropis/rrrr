@@ -63,8 +63,8 @@ const isColumnValid = (selectedColumn, fullData) => {
   return columnIsValid;
 };
 
-const getAnnotations = (fullData, seelctedColumn) => {
-  const theOtherColumn = 1 - seelctedColumn;
+const getAnnotations = (fullData, seelctedColumnNo) => {
+  const theOtherColumn = 1 - seelctedColumnNo;
   const annotations = [];
   for (let i = 0; i < fullData.length; i++) {
     const value = fullData[i][theOtherColumn];
@@ -76,6 +76,7 @@ const getAnnotations = (fullData, seelctedColumn) => {
 const CSVReader = ({
   fullData,
   setFullData,
+  selectedColumnNo,
   setSelectedColumnNo,
   filename,
   setFilename,
@@ -207,12 +208,12 @@ const CSVReader = ({
   }, [separator, currentFile, processFile]);
 
   useEffect(() => {
-    if (selectedColumn) {
-      console.log("selectedColumn", selectedColumn);
-      const annotations = getAnnotations(fullData, selectedColumn);
+    if (selectedColumnNo !== null && selectedColumnNo >= 0) {
+      console.log("selectedColumn", selectedColumnNo);
+      const annotations = getAnnotations(fullData, selectedColumnNo);
       setAnnotValues(annotations);
     }
-  }, [fullData, selectedColumn, setAnnotValues]);
+  }, [fullData, selectedColumnNo, setAnnotValues]);
 
   useEffect(() => {
     const maxHeader =
