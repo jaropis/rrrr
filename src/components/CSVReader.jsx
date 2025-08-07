@@ -27,7 +27,7 @@ import {
 } from "@mui/icons-material";
 
 const getHeaderAndData = (parsedLines, setHeaderPresent, rowsToRemove) => {
-  // Remove specified number of rows from the beginning
+  // removing specified number of rows from the beginning
   const linesAfterRemoval = parsedLines.slice(rowsToRemove);
 
   if (linesAfterRemoval.length === 0) {
@@ -79,6 +79,8 @@ const CSVReader = ({
   setHeaderPresent,
   rowsToRemove,
   setRowsToRemove,
+  annotValues,
+  setAnnotValues,
 }) => {
   const [data, setData] = useState([]);
   const [headers, setHeaders] = useState([]);
@@ -88,6 +90,7 @@ const CSVReader = ({
   const [separator, setSeparator] = useState("tab");
   const [isTableExpanded, setIsTableExpanded] = useState(true);
   const [currentFile, setCurrentFile] = useState(null);
+  const [selectedAnnotation, setSelectedAnnotation] = useState("");
   const rowsToShow = 6;
 
   const getSeparatorValue = (sep) => {
@@ -285,7 +288,7 @@ const CSVReader = ({
             <Box>
               <input
                 type="file"
-                accept=".txt,.csv,.tsv,.dat,.rea"
+                accept=".txt,.csv,.tsv,.dat,.rea, .rri"
                 onChange={handleFileUpload}
                 style={{ display: "none" }}
                 id="file-input"
@@ -359,7 +362,25 @@ const CSVReader = ({
               }
               label="Extract RRs"
             />
-
+            {diff && (
+              <FormControl sx={{ minWidth: 80 }}>
+                <InputLabel id="annotation-label">Avail. annotats</InputLabel>
+                <Select
+                  labelId="annotation-label"
+                  id="annotation"
+                  value={selectedAnnotation}
+                  label="Annotation"
+                  onChange={(e) => setSelectedAnnotation(e.target.value)}
+                  sx={{ borderRadius: 2 }}
+                >
+                  {annotValues.map((value, index) => (
+                    <MenuItem key={index} value={value}>
+                      {value}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            )}
             <TextField
               id="scaleDataBy"
               label="Scale data by"
@@ -397,7 +418,7 @@ const CSVReader = ({
                 setRowsToRemove(Math.max(0, parseInt(e.target.value) || 0))
               }
               sx={{
-                width: 180,
+                width: 80,
                 "& .MuiOutlinedInput-root": { borderRadius: 2 },
               }}
             />

@@ -54,6 +54,7 @@ function App() {
   const [plottingData, setPlottingData] = useState(null);
   const [headerPresent, setHeaderPresent] = useState(true);
   const [rowsToRemove, setRowsToRemove] = useState(0);
+  const [annotValues, setAnnotValues] = useState([]);
 
   useEffect(() => {
     if (fullData && selectedColumnNo >= 0) {
@@ -124,6 +125,8 @@ function App() {
         setHeaderPresent={setHeaderPresent}
         rowsToRemove={rowsToRemove}
         setRowsToRemove={setRowsToRemove}
+        annotValues={annotValues}
+        setAnnotValues={setAnnotValues}
       />
       {generatePlot && selectedColumnNo >= 0 && (
         <Tachogram

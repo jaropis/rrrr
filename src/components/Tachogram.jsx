@@ -209,7 +209,7 @@ const Tachogram = ({ data, plottingData, selectedColumn, filename, diff }) => {
   useEffect(() => {
     if (plottingData && plottingData.length > 0) {
       const processedData = plottingData.map((point) => {
-        // Convert the starting time to a Date object
+        // converting the starting time to a Date object
         const startingAt = createDateFromTimeString(startingTime);
         const millisecondsToAdd = point[0] * 1000;
         const newTimestamp = startingAt.getTime() + millisecondsToAdd;
