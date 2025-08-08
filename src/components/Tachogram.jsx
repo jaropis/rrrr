@@ -130,6 +130,7 @@ const Tachogram = ({ data, plottingData, selectedColumn, filename, diff }) => {
     setLastChanged("minmax"); // info that the last change was minmax
   };
   const handleCut = (e) => {
+    // TUTU
     e.preventDefault();
     const { startIndex, endIndex } = sliceResultingData(
       data,

@@ -123,6 +123,7 @@ function App() {
         setScaleDataBy={setScaleDataBy}
         generatePlot={generatePlot}
         setGeneratePlot={setGeneratePlot}
+        headerPresent={headerPresent}
         setHeaderPresent={setHeaderPresent}
         rowsToRemove={rowsToRemove}
         setRowsToRemove={setRowsToRemove}

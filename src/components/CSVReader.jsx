@@ -26,7 +26,15 @@ import {
   Analytics as AnalyticsIcon,
 } from "@mui/icons-material";
 
-const getHeaderAndData = (parsedLines, setHeaderPresent, rowsToRemove) => {
+const findCharacterIndex = (arr) => {
+  return arr.findIndex((item) => typeof item === "string" && item.length > 0);
+};
+const getHeaderAndData = (
+  parsedLines,
+  headerPresent,
+  setHeaderPresent,
+  rowsToRemove,
+) => {
   // removing specified number of rows from the beginning
   const linesAfterRemoval = parsedLines.slice(rowsToRemove);
 
@@ -37,15 +45,37 @@ const getHeaderAndData = (parsedLines, setHeaderPresent, rowsToRemove) => {
 
   let parsedHeaders = linesAfterRemoval[0];
   let parsedData;
-  // checking if all headers can be cast to numbers
-  const allHeadersAreNumbers = parsedHeaders.every((header) => {
-    const parsedHeader = parseFloat(header);
+  // checking if some of the headers are numbers, and if so, if the next 10 lines behave the same - if so, we assume that there is no header
+  // TUTU
+  const someHeadersAreNumbers = parsedHeaders.some((headerItem) => {
+    const parsedHeader = parseFloat(headerItem);
     return !isNaN(parsedHeader) && isFinite(parseFloat(parsedHeader));
   });
-  if (allHeadersAreNumbers) {
+  if (someHeadersAreNumbers) {
+    const firstLine = linesAfterRemoval[0];
+    const firstLineIndex = findCharacterIndex(firstLine);
     setHeaderPresent(false);
-    parsedHeaders = parsedHeaders.map((header, index) => `Column ${index + 1}`);
-    parsedData = linesAfterRemoval;
+    for (let i = 1; i < Math.min(10, linesAfterRemoval.length); i++) {
+      const line = linesAfterRemoval[i];
+      const parsedLine = line.map((item) => parseFloat(item));
+      if (
+        parsedLine.lenght === firstLine.length &&
+        findCharacterIndex(parsedLine) === firstLineIndex
+      ) {
+        continue;
+      } else {
+        setHeaderPresent(true);
+        break;
+      }
+    }
+    if (headerPresent) {
+      parsedHeaders = parsedHeaders.map(
+        (header, index) => `Column ${index + 1}`,
+      );
+      parsedData = linesAfterRemoval;
+    } else {
+      parsedData = linesAfterRemoval.slice(1);
+    }
   } else {
     setHeaderPresent(true);
     parsedData = linesAfterRemoval.slice(1);
@@ -89,6 +119,7 @@ const CSVReader = ({
   setScaleDataBy,
   generatePlot,
   setGeneratePlot,
+  headerPresent,
   setHeaderPresent,
   rowsToRemove,
   setRowsToRemove,
@@ -149,13 +180,14 @@ const CSVReader = ({
           );
           const { parsedHeaders, parsedData } = getHeaderAndData(
             parsedLines,
+            headerPresent,
             setHeaderPresent,
             rowsToRemove,
           );
 
           setFullData(parsedLines);
           setHeaders(parsedHeaders);
-
+          setAnnotValues([]);
           // creating grid data
           const gridData = parsedData.slice(0, rowsToShow).map((row, index) => {
             const rowData = { id: index };
@@ -188,6 +220,7 @@ const CSVReader = ({
       rowsToShow,
       setHeaderPresent,
       rowsToRemove,
+      setAnnotValues,
     ],
   );
 
@@ -210,10 +243,12 @@ const CSVReader = ({
 
   useEffect(() => {
     if (selectedColumnNo !== null && selectedColumnNo >= 0) {
-      const annotations = getAnnotations(fullData, selectedColumnNo);
+      const annotations = getAnnotations(fullData, selectedColumnNo).filter(
+        (elem) => !headers.includes(elem),
+      );
       setAnnotValues(annotations);
     }
-  }, [fullData, selectedColumnNo, setAnnotValues]);
+  }, [fullData, selectedColumnNo, setAnnotValues, headers]);
 
   useEffect(() => {
     const maxHeader =
