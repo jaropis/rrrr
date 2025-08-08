@@ -72,6 +72,7 @@ const getAnnotations = (fullData, seelctedColumnNo) => {
       annotations.push(value);
     }
   }
+  return annotations;
 };
 const CSVReader = ({
   fullData,
@@ -209,7 +210,6 @@ const CSVReader = ({
 
   useEffect(() => {
     if (selectedColumnNo !== null && selectedColumnNo >= 0) {
-      console.log("selectedColumn", selectedColumnNo);
       const annotations = getAnnotations(fullData, selectedColumnNo);
       setAnnotValues(annotations);
     }
@@ -393,11 +393,12 @@ const CSVReader = ({
                   onChange={(e) => setSelectedAnnotation(e.target.value)}
                   sx={{ borderRadius: 2 }}
                 >
-                  {annotValues.map((value, index) => (
-                    <MenuItem key={index} value={value}>
-                      {value}
-                    </MenuItem>
-                  ))}
+                  {annotValues &&
+                    annotValues.map((value, index) => (
+                      <MenuItem key={index} value={value}>
+                        {value}
+                      </MenuItem>
+                    ))}
                 </Select>
               </FormControl>
             )}
