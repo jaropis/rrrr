@@ -46,7 +46,6 @@ const getHeaderAndData = (
   let parsedHeaders = linesAfterRemoval[0];
   let parsedData;
   // checking if some of the headers are numbers, and if so, if the next 10 lines behave the same - if so, we assume that there is no header
-  // TUTU
   const someHeadersAreNumbers = parsedHeaders.some((headerItem) => {
     const parsedHeader = parseFloat(headerItem);
     return !isNaN(parsedHeader) && isFinite(parseFloat(parsedHeader));
@@ -125,6 +124,8 @@ const CSVReader = ({
   setRowsToRemove,
   annotValues,
   setAnnotValues,
+  selectedAnnotation,
+  setSelectedAnnotation,
 }) => {
   const [data, setData] = useState([]);
   const [headers, setHeaders] = useState([]);
@@ -134,7 +135,6 @@ const CSVReader = ({
   const [separator, setSeparator] = useState("tab");
   const [isTableExpanded, setIsTableExpanded] = useState(true);
   const [currentFile, setCurrentFile] = useState(null);
-  const [selectedAnnotation, setSelectedAnnotation] = useState("");
   const rowsToShow = 6;
 
   const getSeparatorValue = (sep) => {
@@ -187,7 +187,6 @@ const CSVReader = ({
 
           setFullData(parsedLines);
           setHeaders(parsedHeaders);
-          setAnnotValues([]);
           // creating grid data
           const gridData = parsedData.slice(0, rowsToShow).map((row, index) => {
             const rowData = { id: index };
@@ -220,7 +219,6 @@ const CSVReader = ({
       rowsToShow,
       setHeaderPresent,
       rowsToRemove,
-      setAnnotValues,
     ],
   );
 

@@ -55,6 +55,7 @@ function App() {
   const [headerPresent, setHeaderPresent] = useState(true);
   const [rowsToRemove, setRowsToRemove] = useState(0);
   const [annotValues, setAnnotValues] = useState([]);
+  const [normalAnnot, setNormalAnnot] = useState("");
 
   useEffect(() => {
     if (fullData && selectedColumnNo >= 0) {
@@ -129,6 +130,8 @@ function App() {
         setRowsToRemove={setRowsToRemove}
         annotValues={annotValues}
         setAnnotValues={setAnnotValues}
+        normalAnnot={normalAnnot}
+        setNormalAnnot={setNormalAnnot}
       />
       {generatePlot && selectedColumnNo >= 0 && (
         <Tachogram
@@ -138,6 +141,7 @@ function App() {
           filename={customFilename ? customFilename + filename : filename} // using custom filename if provided
           diff={diff}
           generatePlot={generatePlot}
+          normalAnnot={normalAnnot}
         />
       )}
     </div>

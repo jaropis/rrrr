@@ -124,13 +124,19 @@ function createDateFromTimeString(timeString, nextDay = false) {
   return date;
 }
 
-const Tachogram = ({ data, plottingData, selectedColumn, filename, diff }) => {
+const Tachogram = ({
+  data,
+  plottingData,
+  selectedColumn,
+  filename,
+  diff,
+  normalAnnot,
+}) => {
   const logRange = (min, max, label) => {
     setMinmax([min, max]);
     setLastChanged("minmax"); // info that the last change was minmax
   };
   const handleCut = (e) => {
-    // TUTU
     e.preventDefault();
     const { startIndex, endIndex } = sliceResultingData(
       data,
@@ -161,6 +167,12 @@ const Tachogram = ({ data, plottingData, selectedColumn, filename, diff }) => {
       header.push("RR");
       for (let idx = 0; idx < cutData.length; idx++) {
         cutData[idx].push(cutPlottingData[idx][1].toFixed(3));
+        console.log("cutData:", cutData);
+        cutData[1 - selectedColumn].push(
+          cutData[1 - selectedColumn][idx - 1] !== normalAnnot
+            ? cutData[1 - selectedColumn][idx - 1]
+            : normalAnnot,
+        );
       }
     } else {
       for (let idx = 0; idx < cutData.length; idx++) {
