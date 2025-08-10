@@ -249,6 +249,7 @@ const CSVReader = ({
       const annotations = getAnnotations(fullData, selectedColumnNo).filter(
         (elem) => !headers.includes(elem),
       );
+      // TUTU
       console.log("annotations", annotations);
       setAnnotValues(annotations);
     }
