@@ -24,6 +24,7 @@ function isDayApart(date1, date2) {
 const timestampToDataIndex = (timestamp, startingTime, plottingData) => {
   const startTime = createDateFromTimeString(startingTime).getTime();
   const relativeTime = timestamp - startTime;
+  console.log("relativeTime", relativeTime);
 
   const timeInSeconds = relativeTime / 1000;
   let closestIdx = 0;
@@ -34,14 +35,6 @@ const timestampToDataIndex = (timestamp, startingTime, plottingData) => {
       minDiff = diff;
       closestIdx = i;
     }
-  }
-  const timeBetweenStartAndWindow = plottingData
-    .slice(0, closestIdx + 1)
-    .reduce((acc, point) => {
-      return acc + point[1];
-    }, 0);
-  if (timeBetweenStartAndWindow <= relativeTime) {
-    closestIdx += 1; // this is because we want the next point after the end of the segment between recording start and the beginnign of the window - so basically the first point inside the window
   }
   return closestIdx;
 };
@@ -58,6 +51,7 @@ function sliceResultingData(
   let startIndex = null;
   let endIndex = null;
   if (lastChanged === "minmax") {
+    console.log("minmax", minmax);
     startIndex = timestampToDataIndex(minmax[0], startingTime, plottingData);
     endIndex = timestampToDataIndex(minmax[1], startingTime, plottingData);
   }
@@ -131,15 +125,13 @@ const Tachogram = ({
   filename,
   diff,
   normalAnnot,
+  headerPresent,
 }) => {
   const logRange = (min, max, label) => {
     setMinmax([min, max]);
     setLastChanged("minmax"); // info that the last change was minmax
   };
   const handleCut = (e) => {
-    console.log("startingTime", startingTime);
-    console.log("windowStartingTime", windowStartingTime);
-    console.log("windowEndingTime", windowEndingTime);
     e.preventDefault();
     const { startIndex, endIndex } = sliceResultingData(
       data,
@@ -156,34 +148,23 @@ const Tachogram = ({
       const parsedHeader = parseFloat(header);
       return !isNaN(parsedHeader) && isFinite(parseFloat(parsedHeader));
     });
-    if (allHeadersAreNumbers) {
-      header = header.map((header, index) => `Column ${index + 1}`);
-    } else {
-      header = ["timetrack", "RR", "annot"];
-    }
+
     //deep copy of a part of the data
-    const offset = Number(!allHeadersAreNumbers) + Number(diff); // if there is a header, we need to offset the data by 1, if RRs are calculated from the second R wave vs first, we need to add 1, so Number(diff)
+    const offset = Number(headerPresent) + Number(diff); // if there is a header, we need to offset the data by 1, if RRs are calculated from the second R wave vs first, we need to add 1, so Number(diff)
     let cutData = data
       .slice(startIndex + offset, endIndex + offset + 1) // +1 because we want to include the last point - this is what the user expects
       .map((row) => [...row]);
+    console.log("cutData", cutData);
     let cutPlottingData = plottingData.slice(startIndex, endIndex + 1); // +1 because we want to include the last point - this is what the user expects - see above
+    console.log("cutPlottingData", cutPlottingData);
     if (diff) {
-      console.log("data", data);
-      console.log("cutPlottingData", cutPlottingData);
-      console.log("plottingData", plottingData);
-      // console.log("cutData", cutData);
-
-      for (let idx = 0; idx < data.length - 1; idx++) {
-        // console.log("data[idx]", idx, data[idx]);
-        // console.log("cutData[idx", idx, cutData[idx]);
-        // cutData[idx].splice(1, 0, cutPlottingData[idx][1].toFixed(3));
-        // TUTU
+      for (let idx = 0; idx < cutData.length - 1; idx++) {
         let currentAnnot = cutData[idx][2];
-        if (data[idx][2] !== normalAnnot) {
-          currentAnnot = data[idx][1];
+        if (cutData[idx][2] !== normalAnnot) {
+          currentAnnot = cutData[idx][1];
         }
-        if (data[idx + 1][1] !== normalAnnot) {
-          currentAnnot = data[idx + 1][1];
+        if (cutData[idx + 1][1] !== normalAnnot) {
+          currentAnnot = cutData[idx + 1][1];
         }
         cutData[idx][2] = currentAnnot;
       }

@@ -144,6 +144,7 @@ function App() {
           diff={diff}
           generatePlot={generatePlot}
           normalAnnot={normalAnnot}
+          headerPresent={headerPresent}
         />
       )}
     </div>
