@@ -143,42 +143,45 @@ const Tachogram = ({
       lastChanged,
     );
     console.log("start_index, end_index", startIndex, endIndex);
-    let header = [...data[0]];
-    const allHeadersAreNumbers = header.every((header) => {
-      const parsedHeader = parseFloat(header);
-      return !isNaN(parsedHeader) && isFinite(parseFloat(parsedHeader));
-    });
-
+    let header;
+    if (headerPresent) {
+      header = [...data[0]];
+    } else {
+      header = ["timetrack", "RR", "annot"];
+    }
     //deep copy of a part of the data
     const offset = Number(headerPresent) + Number(diff); // if there is a header, we need to offset the data by 1, if RRs are calculated from the second R wave vs first, we need to add 1, so Number(diff)
     let cutData = data
       .slice(startIndex + offset, endIndex + offset + 1) // +1 because we want to include the last point - this is what the user expects
       .map((row) => [...row]);
-    console.log("cutData", cutData);
+    // console.log("cutData", cutData);
+    // console.log("plottingData before loop", plottingData);
     let cutPlottingData = plottingData.slice(startIndex, endIndex + 1); // +1 because we want to include the last point - this is what the user expects - see above
-    console.log("cutPlottingData", cutPlottingData);
+    //console.log("cutPlottingData before loop", cutPlottingData);
+    console.log("normalAnnot", normalAnnot);
     if (diff) {
       for (let idx = 0; idx < cutData.length - 1; idx++) {
-        let currentAnnot = cutData[idx][2];
-        if (cutData[idx][2] !== normalAnnot) {
+        let currentAnnot = cutData[idx][1];
+        if (cutData[idx][1] !== normalAnnot) {
           currentAnnot = cutData[idx][1];
         }
         if (cutData[idx + 1][1] !== normalAnnot) {
           currentAnnot = cutData[idx + 1][1];
         }
-        cutData[idx][2] = currentAnnot;
+        console.log("currentAnnot", currentAnnot);
+        cutPlottingData[idx][2] = currentAnnot;
       }
     } else {
       for (let idx = 0; idx < cutData.length; idx++) {
         cutData[idx][selectedColumn] = cutPlottingData[idx][1];
       }
-      if (allHeadersAreNumbers) {
+      if (headerPresent) {
         header[selectedColumn] = "RR";
       }
     }
 
-    cutData.splice(0, 0, header);
-    const csvContent = cutData.map((row) => row.join("\t")).join("\n");
+    cutPlottingData.splice(0, 0, header);
+    const csvContent = cutPlottingData.map((row) => row.join("\t")).join("\n");
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
 
