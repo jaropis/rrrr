@@ -54,7 +54,7 @@ function App() {
   const [scaleDataBy, setScaleDataBy] = useState(1);
   const [generatePlot, setGeneratePlot] = useState(false);
   const [plottingData, setPlottingData] = useState(null);
-  const [headerPresent, setHeaderPresent] = useState(true);
+  const [headerPresent, setHeaderPresent] = useState(null); // don't want to decide one way or the other
   const [rowsToRemove, setRowsToRemove] = useState(0);
   const [annotValues, setAnnotValues] = useState([]);
   const [normalAnnot, setNormalAnnot] = useState("");

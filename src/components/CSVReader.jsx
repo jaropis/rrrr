@@ -55,6 +55,11 @@ const getHeaderAndData = (
     setHeaderPresent(false);
     for (let i = 1; i < Math.min(3, linesAfterRemoval.length); i++) {
       const line = linesAfterRemoval[i];
+      // console.log(
+      //   "line.length === firstLine.length && findCharacterIndex(line) === firstLineIndex",
+      //   line.length === firstLine.length &&
+      //     findCharacterIndex(line) === firstLineIndex,
+      // );
       if (
         line.length === firstLine.length &&
         findCharacterIndex(line) === firstLineIndex
@@ -65,6 +70,7 @@ const getHeaderAndData = (
         break;
       }
     }
+    console.log("headerPresent", headerPresent);
     if (headerPresent) {
       parsedHeaders = parsedHeaders.map(
         (header, index) => `Column ${index + 1}`,
@@ -243,6 +249,7 @@ const CSVReader = ({
       const annotations = getAnnotations(fullData, selectedColumnNo).filter(
         (elem) => !headers.includes(elem),
       );
+      console.log("annotations", annotations);
       setAnnotValues(annotations);
     }
   }, [fullData, selectedColumnNo, setAnnotValues, headers]);
