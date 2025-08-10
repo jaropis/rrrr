@@ -37,7 +37,6 @@ const getHeaderAndData = (
 ) => {
   // removing specified number of rows from the beginning
   const linesAfterRemoval = parsedLines.slice(rowsToRemove);
-
   if (linesAfterRemoval.length === 0) {
     setHeaderPresent(false);
     return { parsedHeaders: [], parsedData: [] };
@@ -45,7 +44,7 @@ const getHeaderAndData = (
 
   let parsedHeaders = linesAfterRemoval[0];
   let parsedData;
-  // checking if some of the headers are numbers, and if so, if the next 10 lines behave the same - if so, we assume that there is no header
+  // checking if some of the headers are numbers, and if so, if the next 3 lines behave the same - if so, we assume that there is no header
   const someHeadersAreNumbers = parsedHeaders.some((headerItem) => {
     const parsedHeader = parseFloat(headerItem);
     return !isNaN(parsedHeader) && isFinite(parseFloat(parsedHeader));
@@ -54,12 +53,11 @@ const getHeaderAndData = (
     const firstLine = linesAfterRemoval[0];
     const firstLineIndex = findCharacterIndex(firstLine);
     setHeaderPresent(false);
-    for (let i = 1; i < Math.min(10, linesAfterRemoval.length); i++) {
+    for (let i = 1; i < Math.min(3, linesAfterRemoval.length); i++) {
       const line = linesAfterRemoval[i];
-      const parsedLine = line.map((item) => parseFloat(item));
       if (
-        parsedLine.lenght === firstLine.length &&
-        findCharacterIndex(parsedLine) === firstLineIndex
+        line.length === firstLine.length &&
+        findCharacterIndex(line) === firstLineIndex
       ) {
         continue;
       } else {
@@ -219,6 +217,7 @@ const CSVReader = ({
       rowsToShow,
       setHeaderPresent,
       rowsToRemove,
+      headerPresent,
     ],
   );
 

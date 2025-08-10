@@ -137,6 +137,9 @@ const Tachogram = ({
     setLastChanged("minmax"); // info that the last change was minmax
   };
   const handleCut = (e) => {
+    console.log("startingTime", startingTime);
+    console.log("windowStartingTime", windowStartingTime);
+    console.log("windowEndingTime", windowEndingTime);
     e.preventDefault();
     const { startIndex, endIndex } = sliceResultingData(
       data,
@@ -147,6 +150,7 @@ const Tachogram = ({
       windowEndingTime,
       lastChanged,
     );
+    console.log("start_index, end_index", startIndex, endIndex);
     let header = [...data[0]];
     const allHeadersAreNumbers = header.every((header) => {
       const parsedHeader = parseFloat(header);
@@ -154,25 +158,34 @@ const Tachogram = ({
     });
     if (allHeadersAreNumbers) {
       header = header.map((header, index) => `Column ${index + 1}`);
+    } else {
+      header = ["timetrack", "RR", "annot"];
     }
     //deep copy of a part of the data
     const offset = Number(!allHeadersAreNumbers) + Number(diff); // if there is a header, we need to offset the data by 1, if RRs are calculated from the second R wave vs first, we need to add 1, so Number(diff)
     let cutData = data
       .slice(startIndex + offset, endIndex + offset + 1) // +1 because we want to include the last point - this is what the user expects
       .map((row) => [...row]);
-
     let cutPlottingData = plottingData.slice(startIndex, endIndex + 1); // +1 because we want to include the last point - this is what the user expects - see above
-
     if (diff) {
-      header.push("RR");
-      for (let idx = 0; idx < cutData.length; idx++) {
-        cutData[idx].push(cutPlottingData[idx][1].toFixed(3));
-        console.log("cutData:", cutData);
-        cutData[1 - selectedColumn].push(
-          cutData[1 - selectedColumn][idx - 1] !== normalAnnot
-            ? cutData[1 - selectedColumn][idx - 1]
-            : normalAnnot,
-        );
+      console.log("data", data);
+      console.log("cutPlottingData", cutPlottingData);
+      console.log("plottingData", plottingData);
+      // console.log("cutData", cutData);
+
+      for (let idx = 0; idx < data.length - 1; idx++) {
+        // console.log("data[idx]", idx, data[idx]);
+        // console.log("cutData[idx", idx, cutData[idx]);
+        // cutData[idx].splice(1, 0, cutPlottingData[idx][1].toFixed(3));
+        // TUTU
+        let currentAnnot = cutData[idx][2];
+        if (data[idx][2] !== normalAnnot) {
+          currentAnnot = data[idx][1];
+        }
+        if (data[idx + 1][1] !== normalAnnot) {
+          currentAnnot = data[idx + 1][1];
+        }
+        cutData[idx][2] = currentAnnot;
       }
     } else {
       for (let idx = 0; idx < cutData.length; idx++) {
