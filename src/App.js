@@ -14,8 +14,6 @@ const parseDiff = (
   let cumulativeTime = 0;
   const localPlottingData = [];
   const loopStart = headerPresent ? 1 + rowsToRemove : rowsToRemove;
-  console.log("headerPresent, rowsToRemove", headerPresent, rowsToRemove);
-  console.log("loopStart", loopStart);
   for (let i = loopStart; i < data.length - 1; i++) {
     const value =
       (parseFloat(data[i + 1][selectedColumn]) -

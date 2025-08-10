@@ -70,8 +70,7 @@ const getHeaderAndData = (
         break;
       }
     }
-    console.log("headerPresent", headerPresent);
-    if (headerPresent) {
+    if (!headerPresent) {
       parsedHeaders = parsedHeaders.map(
         (header, index) => `Column ${index + 1}`,
       );
@@ -128,8 +127,8 @@ const CSVReader = ({
   setRowsToRemove,
   annotValues,
   setAnnotValues,
-  selectedAnnotation,
-  setSelectedAnnotation,
+  normalAnnot,
+  setNormalAnnot,
 }) => {
   const [data, setData] = useState([]);
   const [headers, setHeaders] = useState([]);
@@ -249,8 +248,6 @@ const CSVReader = ({
       const annotations = getAnnotations(fullData, selectedColumnNo).filter(
         (elem) => !headers.includes(elem),
       );
-      // TUTU
-      console.log("annotations", annotations);
       setAnnotValues(annotations);
     }
   }, [fullData, selectedColumnNo, setAnnotValues, headers]);
@@ -428,9 +425,9 @@ const CSVReader = ({
                 <Select
                   labelId="annotation-label"
                   id="annotation"
-                  value={selectedAnnotation}
+                  value={normalAnnot}
                   label="Annotation"
-                  onChange={(e) => setSelectedAnnotation(e.target.value)}
+                  onChange={(e) => setNormalAnnot(e.target.value)}
                   sx={{ borderRadius: 2 }}
                 >
                   {annotValues &&
