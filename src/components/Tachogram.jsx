@@ -156,20 +156,18 @@ const Tachogram = ({
       .map((row) => [...row]);
     // console.log("cutData", cutData);
     // console.log("plottingData before loop", plottingData);
-    let cutPlottingData = plottingData.slice(startIndex, endIndex + 1); // +1 because we want to include the last point - this is what the user expects - see above
-    //console.log("cutPlottingData before loop", cutPlottingData);
-    console.log("normalAnnot", normalAnnot);
+    let cutPlottingData = plottingData.slice(startIndex, endIndex + 1); // +1 because we want to include the last point - this is
+    cutPlottingData = cutPlottingData.map((item) => [...item, normalAnnot]);
     if (diff) {
       for (let idx = 0; idx < cutData.length; idx++) {
-        let currentAnnot = cutData[idx][1];
         if (cutData[idx][1] !== normalAnnot) {
-          currentAnnot = cutData[idx][1];
+          cutPlottingData[idx][2] = cutData[idx][1];
         }
-        if (idx + 1 < cutData.length && cutData[idx + 1][1] !== normalAnnot) {
-          currentAnnot = cutData[idx + 1][1];
-        }
-        if (idx + 1 < cutPlottingData.length) {
-          cutPlottingData[idx + 1][2] = currentAnnot;
+        if (
+          cutData[idx][1] !== normalAnnot &&
+          idx + 1 < cutPlottingData.length
+        ) {
+          cutPlottingData[idx + 1][2] = cutData[idx][1];
         }
       }
     } else {
