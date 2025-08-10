@@ -160,16 +160,17 @@ const Tachogram = ({
     //console.log("cutPlottingData before loop", cutPlottingData);
     console.log("normalAnnot", normalAnnot);
     if (diff) {
-      for (let idx = 0; idx < cutData.length - 1; idx++) {
+      for (let idx = 0; idx < cutData.length; idx++) {
         let currentAnnot = cutData[idx][1];
         if (cutData[idx][1] !== normalAnnot) {
           currentAnnot = cutData[idx][1];
         }
-        if (cutData[idx + 1][1] !== normalAnnot) {
+        if (idx + 1 < cutData.length && cutData[idx + 1][1] !== normalAnnot) {
           currentAnnot = cutData[idx + 1][1];
         }
-        console.log("currentAnnot", currentAnnot);
-        cutPlottingData[idx][2] = currentAnnot;
+        if (idx + 1 < cutPlottingData.length) {
+          cutPlottingData[idx + 1][2] = currentAnnot;
+        }
       }
     } else {
       for (let idx = 0; idx < cutData.length; idx++) {
