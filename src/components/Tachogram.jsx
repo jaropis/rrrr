@@ -155,15 +155,13 @@ const Tachogram = ({
       .slice(startIndex + offset, endIndex + offset + 1) // +1 because we want to include the last point - this is what the user expects
       .map((row) => [...row]);
     let cutPlottingData = plottingData.slice(startIndex, endIndex + 1); // +1 because we want to include the last point - this is
-    // cutPlottingData = cutPlottingData.map((item) => [...item, normalAnnot]);
-    let dontTouch;
+    let dontTouch; // this keeps the indices that were already filled
     if (diff) {
       for (let idx = 0; idx < cutData.length; idx++) {
 	if (idx !== dontTouch) {
           cutPlottingData[idx][2] = cutData[idx][1];
-	} else {
-	  console.log("not touching");
-	}
+	} 
+	  
         if (
           cutData[idx][1] !== normalAnnot &&
           idx + 1 < cutPlottingData.length
