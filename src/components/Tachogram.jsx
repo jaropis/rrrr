@@ -158,16 +158,16 @@ const Tachogram = ({
     let dontTouch; // this keeps the indices that were already filled
     if (diff) {
       for (let idx = 0; idx < cutData.length; idx++) {
-	if (idx !== dontTouch) {
+        if (idx !== dontTouch) {
           cutPlottingData[idx][2] = cutData[idx][1];
-	} 
-	  
+        }
+
         if (
           cutData[idx][1] !== normalAnnot &&
           idx + 1 < cutPlottingData.length
         ) {
           cutPlottingData[idx + 1][2] = cutData[idx][1];
-	  dontTouch = idx + 1;
+          dontTouch = idx + 1;
         }
       }
     } else {
