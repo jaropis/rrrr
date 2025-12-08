@@ -139,18 +139,27 @@ const Tachogram = ({
       .slice(startIndex + offset, endIndex + offset + 1)
       .map((row) => [...row]);
     let cutPlottingData = plottingData.slice(startIndex, endIndex + 1);
-    let dontTouch;
     if (diff) {
-      for (let idx = 0; idx < cutData.length; idx++) {
-        if (idx !== dontTouch) {
+      // For each RR interval, check both R-peaks that define it
+      // RR[i] = R[i+1] - R[i], so check annotations at cutData[i] and cutData[i+1]
+      for (let idx = 0; idx < cutPlottingData.length; idx++) {
+        // Check if we have both R-peaks for this interval
+        if (idx + 1 < cutData.length) {
+          const currentRAnnot = cutData[idx][1];
+          const nextRAnnot = cutData[idx + 1][1];
+
+          // If EITHER R-peak is not normal, mark the RR interval with the abnormal annotation
+          if (currentRAnnot !== normalAnnot) {
+            cutPlottingData[idx][2] = currentRAnnot;
+          } else if (nextRAnnot !== normalAnnot) {
+            cutPlottingData[idx][2] = nextRAnnot;
+          } else {
+            // Both are normal
+            cutPlottingData[idx][2] = normalAnnot;
+          }
+        } else {
+          // Last RR interval - only check the current R-peak
           cutPlottingData[idx][2] = cutData[idx][1];
-        }
-        if (
-          cutData[idx][1] !== normalAnnot &&
-          idx + 1 < cutPlottingData.length
-        ) {
-          cutPlottingData[idx + 1][2] = cutData[idx][1];
-          dontTouch = idx + 1;
         }
       }
     } else {
