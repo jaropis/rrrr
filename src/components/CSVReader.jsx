@@ -13,29 +13,29 @@ import {
   IconButton,
   Checkbox,
   FormControlLabel,
-  Card,
-  CardContent,
   Chip,
-  Fade,
   Alert,
+  Collapse,
 } from "@mui/material";
 import {
-  CloudUpload as CloudUploadIcon,
-  ExpandMore as ExpandMoreIcon,
-  ExpandLess as ExpandLessIcon,
-  Analytics as AnalyticsIcon,
+  CloudUploadOutlined,
+  KeyboardArrowDown,
+  KeyboardArrowUp,
+  TableChartOutlined,
+  TuneOutlined,
+  DescriptionOutlined,
 } from "@mui/icons-material";
 
 const findCharacterIndex = (arr) => {
   return arr.findIndex((item) => typeof item === "string" && item.length > 0);
 };
+
 const getHeaderAndData = (
   parsedLines,
   headerPresent,
   setHeaderPresent,
   rowsToRemove,
 ) => {
-  // removing specified number of rows from the beginning
   const linesAfterRemoval = parsedLines.slice(rowsToRemove);
   if (linesAfterRemoval.length === 0) {
     setHeaderPresent(false);
@@ -44,22 +44,17 @@ const getHeaderAndData = (
 
   let parsedHeaders = linesAfterRemoval[0];
   let parsedData;
-  // checking if some of the headers are numbers, and if so, if the next 3 lines behave the same - if so, we assume that there is no header
   const someHeadersAreNumbers = parsedHeaders.some((headerItem) => {
     const parsedHeader = parseFloat(headerItem);
     return !isNaN(parsedHeader) && isFinite(parseFloat(parsedHeader));
   });
+
   if (someHeadersAreNumbers) {
     const firstLine = linesAfterRemoval[0];
     const firstLineIndex = findCharacterIndex(firstLine);
     setHeaderPresent(false);
     for (let i = 1; i < Math.min(3, linesAfterRemoval.length); i++) {
       const line = linesAfterRemoval[i];
-      // console.log(
-      //   "line.length === firstLine.length && findCharacterIndex(line) === firstLineIndex",
-      //   line.length === firstLine.length &&
-      //     findCharacterIndex(line) === firstLineIndex,
-      // );
       if (
         line.length === firstLine.length &&
         findCharacterIndex(line) === firstLineIndex
@@ -84,9 +79,9 @@ const getHeaderAndData = (
   }
   return { parsedHeaders, parsedData };
 };
+
 const isColumnValid = (selectedColumn, fullData) => {
   let columnIsValid = false;
-  // checking the first
   for (let idx = 0; idx < Math.min(100, fullData.length); idx++) {
     if (parseFloat(fullData[idx][selectedColumn])) {
       columnIsValid = true;
@@ -106,6 +101,7 @@ const getAnnotations = (fullData, seelctedColumnNo) => {
   }
   return annotations;
 };
+
 const CSVReader = ({
   fullData,
   setFullData,
@@ -155,7 +151,6 @@ const CSVReader = ({
     }
   };
 
-  // file input ref to trigger the hidden input
   const fileInputRef = React.useRef(null);
 
   const processFile = useCallback(
@@ -175,7 +170,6 @@ const CSVReader = ({
             throw new Error("File is empty");
           }
 
-          // parsing all lines with the selected separator
           const parsedLines = lines.map((line) =>
             line
               .split(new RegExp(getSeparatorValue(separator)))
@@ -190,14 +184,11 @@ const CSVReader = ({
 
           setFullData(parsedLines);
           setHeaders(parsedHeaders);
-          // creating grid data
           const gridData = parsedData.slice(0, rowsToShow).map((row, index) => {
             const rowData = { id: index };
-
             parsedHeaders.forEach((header, colIndex) => {
               rowData[header] = colIndex < row.length ? row[colIndex] : "";
             });
-
             return rowData;
           });
           setData(gridData);
@@ -271,11 +262,10 @@ const CSVReader = ({
     }
   }, [generatePlot]);
 
-  // toggling table expansion
   const toggleTableExpansion = () => {
     setIsTableExpanded(!isTableExpanded);
   };
-  // defining columns for DataGrid
+
   const columns = headers.map((header) => ({
     field: header,
     headerName: header.charAt(0).toUpperCase() + header.slice(1),
@@ -283,7 +273,7 @@ const CSVReader = ({
     headerAlign: "center",
     align: "center",
     renderHeader: (params) => (
-      <div style={{ display: "flex", alignItems: "center" }}>
+      <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
         <Radio
           checked={selectedColumn === header}
           size="small"
@@ -297,55 +287,43 @@ const CSVReader = ({
             } else {
               setIsTableExpanded(true);
               setSelectedColumn(null);
-            } // automatically collapsing table when a column is selected
+            }
           }}
         />
-        {params.colDef.headerName}
-      </div>
+        <span>{params.colDef.headerName}</span>
+      </Box>
     ),
   }));
 
   return (
     <Box>
-      {/* Enhanced Input controls section */}
-      <Card
-        elevation={0}
-        sx={{
-          mb: 3,
-          background: "linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)",
-          borderRadius: 3,
-          border: "1px solid rgba(148, 163, 184, 0.2)",
-        }}
-      >
-        <CardContent>
-          <Typography
-            variant="h6"
-            sx={{
-              mb: 3,
-              color: "#475569",
-              fontWeight: 600,
-              display: "flex",
-              alignItems: "center",
-              gap: 1,
-            }}
-          >
-            <AnalyticsIcon color="primary" />
-            Data Configuration
-          </Typography>
-
+      {/* Configuration Section */}
+      <Box className="section" sx={{ mb: 2 }}>
+        <Box className="section__header">
+          <Box className="section__title">
+            <TuneOutlined className="section__title-icon" />
+            <span>Configuration</span>
+          </Box>
+        </Box>
+        <Box className="section__content">
           <Box
             sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: 3,
-              flexWrap: "wrap",
+              display: "grid",
+              gridTemplateColumns: {
+                xs: "1fr",
+                sm: "repeat(2, 1fr)",
+                md: "repeat(3, 1fr)",
+                lg: "repeat(6, 1fr)",
+              },
+              gap: 2,
+              alignItems: "end",
             }}
           >
+            {/* File Upload */}
             <Box>
               <input
                 type="file"
-                accept=".txt,.csv,.tsv,.dat,.rea, .rri"
+                accept=".txt,.csv,.tsv,.dat,.rea,.rri"
                 onChange={handleFileUpload}
                 style={{ display: "none" }}
                 id="file-input"
@@ -353,97 +331,80 @@ const CSVReader = ({
               />
               <Button
                 variant="contained"
-                size="large"
-                startIcon={<CloudUploadIcon />}
+                fullWidth
+                startIcon={<CloudUploadOutlined />}
                 onClick={() => fileInputRef.current.click()}
-                sx={{
-                  background:
-                    "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-                  boxShadow: "0 8px 32px rgba(102, 126, 234, 0.3)",
-                  borderRadius: 2,
-                  px: 3,
-                  py: 1.5,
-                  "&:hover": {
-                    background:
-                      "linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%)",
-                    boxShadow: "0 12px 40px rgba(102, 126, 234, 0.4)",
-                  },
-                }}
+                sx={{ height: 48 }}
               >
                 Select File
               </Button>
             </Box>
 
-            <FormControl sx={{ minWidth: 180 }}>
-              <InputLabel id="separator-label">Separator</InputLabel>
+            {/* Separator */}
+            <FormControl fullWidth size="small">
+              <InputLabel>Separator</InputLabel>
               <Select
-                labelId="separator-label"
-                id="separator"
                 value={separator}
                 label="Separator"
                 onChange={(e) => setSeparator(e.target.value)}
-                sx={{ borderRadius: 2 }}
               >
                 <MenuItem value="tab">Tab</MenuItem>
                 <MenuItem value="whitespace">Whitespace</MenuItem>
-                <MenuItem value="comma">Comma (,)</MenuItem>
-                <MenuItem value="semicolon">Semicolon (;)</MenuItem>
+                <MenuItem value="comma">Comma</MenuItem>
+                <MenuItem value="semicolon">Semicolon</MenuItem>
               </Select>
             </FormControl>
 
+            {/* Custom Filename */}
             <TextField
-              id="customFilename"
-              label="Custom filename"
+              label="Output prefix"
               variant="outlined"
-              size="medium"
+              size="small"
               value={customFilename}
               onChange={(e) => setCustomFilename(e.target.value)}
-              placeholder="Enter prefix"
-              sx={{
-                "& .MuiOutlinedInput-root": { borderRadius: 2 },
-              }}
+              placeholder="Cut_"
             />
 
+            {/* Extract RRs */}
             <FormControlLabel
               control={
                 <Checkbox
                   checked={diff}
                   onChange={(e) => setDiff(e.target.checked)}
-                  color="primary"
-                  sx={{
-                    "&.Mui-checked": {
-                      color: "#667eea",
-                    },
-                  }}
+                  size="small"
                 />
               }
-              label="Extract RRs"
+              label={
+                <Typography variant="body2" sx={{ color: "text.secondary" }}>
+                  Extract RRs
+                </Typography>
+              }
+              sx={{ ml: 0 }}
             />
-            {diff && (
-              <FormControl sx={{ minWidth: 80 }}>
-                <InputLabel id="annotation-label">Sinus beat</InputLabel>
+
+            {/* Sinus Beat */}
+            {diff && annotValues && annotValues.length > 0 && (
+              <FormControl fullWidth size="small">
+                <InputLabel>Sinus beat</InputLabel>
                 <Select
-                  labelId="annotation-label"
-                  id="annotation"
                   value={normalAnnot}
-                  label="Annotation"
+                  label="Sinus beat"
                   onChange={(e) => setNormalAnnot(e.target.value)}
-                  sx={{ borderRadius: 2 }}
                 >
-                  {annotValues &&
-                    annotValues.map((value, index) => (
-                      <MenuItem key={index} value={value}>
-                        {value}
-                      </MenuItem>
-                    ))}
+                  {annotValues.map((value, index) => (
+                    <MenuItem key={index} value={value}>
+                      {value}
+                    </MenuItem>
+                  ))}
                 </Select>
               </FormControl>
             )}
+
+            {/* Scale */}
             <TextField
-              id="scaleDataBy"
-              label="Scale data by"
+              label="Scale factor"
               variant="outlined"
-              size="medium"
+              size="small"
               type="number"
               slotProps={{
                 htmlInput: {
@@ -453,17 +414,13 @@ const CSVReader = ({
               }}
               value={scaleDataBy}
               onChange={(e) => setScaleDataBy(Number(e.target.value))}
-              sx={{
-                width: 150,
-                "& .MuiOutlinedInput-root": { borderRadius: 2 },
-              }}
             />
 
+            {/* Rows to Remove */}
             <TextField
-              id="rowsToRemove"
-              label="Remove rows from top"
+              label="Skip rows"
               variant="outlined"
-              size="medium"
+              size="small"
               type="number"
               slotProps={{
                 htmlInput: {
@@ -475,124 +432,74 @@ const CSVReader = ({
               onChange={(e) =>
                 setRowsToRemove(Math.max(0, parseInt(e.target.value) || 0))
               }
-              sx={{
-                width: 80,
-                "& .MuiOutlinedInput-root": { borderRadius: 2 },
-              }}
             />
           </Box>
-        </CardContent>
-      </Card>
+        </Box>
+      </Box>
 
-      {/* Enhanced error display */}
-      {error && (
-        <Fade in={true}>
-          <Alert severity="error" sx={{ mb: 3, borderRadius: 2 }}>
-            {error}
-          </Alert>
-        </Fade>
-      )}
+      {/* Error Alert */}
+      <Collapse in={!!error}>
+        <Alert severity="error" sx={{ mb: 2 }} onClose={() => setError(null)}>
+          {error}
+        </Alert>
+      </Collapse>
 
-      {/* Enhanced DataGrid display */}
+      {/* Data Preview Section */}
       {data.length > 0 && (
-        <Card
-          elevation={0}
-          sx={{
-            borderRadius: 3,
-            border: "1px solid rgba(148, 163, 184, 0.2)",
-            overflow: "hidden",
-          }}
-        >
+        <Box className="section">
           <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              p: 2,
-              background: "linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%)",
-              borderBottom: "1px solid rgba(148, 163, 184, 0.2)",
-            }}
+            className="section__header"
+            sx={{ cursor: "pointer" }}
+            onClick={toggleTableExpansion}
           >
-            <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-              <Typography
-                variant="h6"
-                sx={{ color: "#475569", fontWeight: 600 }}
-              >
-                Data Preview
-              </Typography>
+            <Box className="section__title">
+              <TableChartOutlined className="section__title-icon" />
+              <span>Data Preview</span>
               {filename && (
                 <Chip
+                  icon={<DescriptionOutlined sx={{ fontSize: 14 }} />}
                   label={filename}
-                  color="primary"
-                  variant="outlined"
                   size="small"
+                  sx={{ ml: 1 }}
                 />
               )}
             </Box>
-            <IconButton
-              onClick={toggleTableExpansion}
-              sx={{
-                background: "rgba(102, 126, 234, 0.1)",
-                "&:hover": {
-                  background: "rgba(102, 126, 234, 0.2)",
-                },
-              }}
-            >
-              {isTableExpanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+            <IconButton size="small">
+              {isTableExpanded ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
             </IconButton>
           </Box>
 
-          <Fade in={isTableExpanded}>
-            <Box sx={{ display: isTableExpanded ? "block" : "none" }}>
-              <Box sx={{ height: 420 }}>
-                <DataGrid
-                  rows={data}
-                  columns={columns}
-                  pageSizeOptions={[5, 10, 25]}
-                  initialState={{
-                    pagination: null,
-                  }}
-                  disableColumnMenu
-                  sx={{
-                    border: "none",
-                    "& .MuiDataGrid-cell": {
-                      borderBottom: "1px solid rgba(148, 163, 184, 0.1)",
-                    },
-                    "& .MuiDataGrid-columnHeaders": {
-                      background:
-                        "linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)",
-                      borderBottom: "2px solid rgba(148, 163, 184, 0.2)",
-                    },
-                    "& .MuiDataGrid-row:hover": {
-                      background: "rgba(102, 126, 234, 0.05)",
-                    },
-                  }}
-                />
-              </Box>
+          <Collapse in={isTableExpanded}>
+            <Box sx={{ height: 380 }}>
+              <DataGrid
+                rows={data}
+                columns={columns}
+                pageSizeOptions={[5, 10, 25]}
+                initialState={{
+                  pagination: null,
+                }}
+                disableColumnMenu
+                hideFooter
+              />
             </Box>
-          </Fade>
-        </Card>
-      )}
+          </Collapse>
 
-      {/* Enhanced debug info */}
-      {headers.length > 0 && (
-        <Fade in={true}>
-          <Card
-            elevation={0}
-            sx={{
-              mt: 2,
-              background: "rgba(102, 126, 234, 0.05)",
-              border: "1px solid rgba(102, 126, 234, 0.1)",
-              borderRadius: 2,
-            }}
-          >
-            <CardContent sx={{ py: 1.5 }}>
-              <Typography variant="body2" sx={{ color: "#64748b" }}>
-                <strong>Detected columns:</strong> {headers.join(", ")}
+          {/* Column Info */}
+          {headers.length > 0 && (
+            <Box
+              className="section__content--compact"
+              sx={{
+                borderTop: "1px solid",
+                borderColor: "divider",
+                bgcolor: "grey.50",
+              }}
+            >
+              <Typography variant="caption" sx={{ color: "text.secondary" }}>
+                <strong>Columns detected:</strong> {headers.join(", ")}
               </Typography>
-            </CardContent>
-          </Card>
-        </Fade>
+            </Box>
+          )}
+        </Box>
       )}
     </Box>
   );

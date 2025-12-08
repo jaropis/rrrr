@@ -1,8 +1,13 @@
 import "./App.css";
 import React, { useState, useEffect } from "react";
-import { Typography } from "@mui/material";
+import { ThemeProvider, CssBaseline, Box, Typography } from "@mui/material";
+import {
+  FavoriteBorderOutlined,
+  SecurityOutlined,
+} from "@mui/icons-material";
 import CSVReader from "./components/CSVReader";
 import Tachogram from "./components/Tachogram";
+import theme from "./theme";
 
 const parseDiff = (
   data,
@@ -20,7 +25,7 @@ const parseDiff = (
         parseFloat(data[i][selectedColumn])) *
       scaleDataBy;
     cumulativeTime = cumulativeTime + value;
-    localPlottingData.push([cumulativeTime / 1000, value]); // we want the timetrack in seconds
+    localPlottingData.push([cumulativeTime / 1000, value]);
   }
   return localPlottingData;
 };
@@ -38,7 +43,7 @@ const parseNoDiff = (
   for (let i = loopStart; i < data.length; i++) {
     const value = parseFloat(data[i][selectedColumn]) * scaleDataBy;
     cumulativeTime = cumulativeTime + value;
-    localPlottingData.push([cumulativeTime / 1000, value]); // we want the timetrack in seconds
+    localPlottingData.push([cumulativeTime / 1000, value]);
   }
   return localPlottingData;
 };
@@ -52,7 +57,7 @@ function App() {
   const [scaleDataBy, setScaleDataBy] = useState(1);
   const [generatePlot, setGeneratePlot] = useState(false);
   const [plottingData, setPlottingData] = useState(null);
-  const [headerPresent, setHeaderPresent] = useState(null); // don't want to decide one way or the other
+  const [headerPresent, setHeaderPresent] = useState(null);
   const [rowsToRemove, setRowsToRemove] = useState(0);
   const [annotValues, setAnnotValues] = useState([]);
   const [normalAnnot, setNormalAnnot] = useState("");
@@ -103,49 +108,74 @@ function App() {
       }
     }
   }, [plottingData, setGeneratePlot]);
+
   return (
-    <div className="App">
-      <Typography variant="h4">R-RR-eR</Typography>
-      <Typography variant="h6" gutterBottom>
-        Your data are analyzed in your browser, they never leave your computer
-      </Typography>
-      <CSVReader
-        fullData={fullData}
-        setFullData={setFullData}
-        selectedColumnNo={selectedColumnNo}
-        setSelectedColumnNo={setSelectedColumnNo}
-        filename={filename}
-        setFilename={setFilename}
-        customFilename={customFilename}
-        setCustomFilename={setCustomFilename}
-        diff={diff}
-        setDiff={setDiff}
-        scaleDataBy={scaleDataBy}
-        setScaleDataBy={setScaleDataBy}
-        generatePlot={generatePlot}
-        setGeneratePlot={setGeneratePlot}
-        headerPresent={headerPresent}
-        setHeaderPresent={setHeaderPresent}
-        rowsToRemove={rowsToRemove}
-        setRowsToRemove={setRowsToRemove}
-        annotValues={annotValues}
-        setAnnotValues={setAnnotValues}
-        normalAnnot={normalAnnot}
-        setNormalAnnot={setNormalAnnot}
-      />
-      {generatePlot && selectedColumnNo >= 0 && (
-        <Tachogram
-          data={fullData}
-          plottingData={plottingData}
-          selectedColumn={selectedColumnNo}
-          filename={customFilename ? customFilename + filename : filename} // using custom filename if provided
-          diff={diff}
-          generatePlot={generatePlot}
-          normalAnnot={normalAnnot}
-          headerPresent={headerPresent}
-        />
-      )}
-    </div>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <div className="App">
+        <Box className="app-layout">
+          {/* Header */}
+          <header className="app-header">
+            <Box className="app-header__brand">
+              <Box className="app-header__logo">
+                <FavoriteBorderOutlined sx={{ fontSize: 20 }} />
+              </Box>
+              <Box>
+                <Typography className="app-header__title">R-RR-eR</Typography>
+                <Typography className="app-header__subtitle">
+                  RR Interval Analysis Tool
+                </Typography>
+              </Box>
+            </Box>
+            <Box className="app-header__badge">
+              <SecurityOutlined sx={{ fontSize: 14 }} />
+              Data stays in your browser
+            </Box>
+          </header>
+
+          {/* Main Content */}
+          <main className="app-main">
+            <CSVReader
+              fullData={fullData}
+              setFullData={setFullData}
+              selectedColumnNo={selectedColumnNo}
+              setSelectedColumnNo={setSelectedColumnNo}
+              filename={filename}
+              setFilename={setFilename}
+              customFilename={customFilename}
+              setCustomFilename={setCustomFilename}
+              diff={diff}
+              setDiff={setDiff}
+              scaleDataBy={scaleDataBy}
+              setScaleDataBy={setScaleDataBy}
+              generatePlot={generatePlot}
+              setGeneratePlot={setGeneratePlot}
+              headerPresent={headerPresent}
+              setHeaderPresent={setHeaderPresent}
+              rowsToRemove={rowsToRemove}
+              setRowsToRemove={setRowsToRemove}
+              annotValues={annotValues}
+              setAnnotValues={setAnnotValues}
+              normalAnnot={normalAnnot}
+              setNormalAnnot={setNormalAnnot}
+            />
+
+            {generatePlot && selectedColumnNo >= 0 && (
+              <Tachogram
+                data={fullData}
+                plottingData={plottingData}
+                selectedColumn={selectedColumnNo}
+                filename={customFilename ? customFilename + filename : filename}
+                diff={diff}
+                generatePlot={generatePlot}
+                normalAnnot={normalAnnot}
+                headerPresent={headerPresent}
+              />
+            )}
+          </main>
+        </Box>
+      </div>
+    </ThemeProvider>
   );
 }
 
